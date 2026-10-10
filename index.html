@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Just Living — NYC</title>
+<meta name="description" content="Just Living. It's a lifestyle. New York streetwear, est. 2020. Tees, essentials, hats and sneakers.">
+<meta property="og:title" content="Just Living — NYC">
+<meta property="og:description" content="It's a lifestyle. New York streetwear, est. 2020.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo/jl-mark-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body class="grain">
+
+<nav class="nav">
+  <a class="logo" href="index.html" aria-label="Just Living"><img src="assets/logo/jl-mark-white.png" alt="JL"></a>
+  <ul>
+    <li><a href="index.html#drop">Drop</a></li>
+    <li><a href="index.html#shop">Shop</a></li>
+    <li><a href="index.html#lookbook">Lookbook</a></li>
+    <li><a href="index.html#story">Story</a></li>
+    <li><a href="info.html">Info</a></li>
+  </ul>
+  <div class="right">
+    <a class="cart" href="#cart" data-cart-count>CART (0)</a>
+    <button class="burger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="bg" id="hero-bg"><picture>
+    <source media="(max-width: 760px)" srcset="assets/bg/hero-nyc-mobile.jpg">
+    <img src="assets/bg/hero-nyc.jpg" alt="" fetchpriority="high">
+  </picture></div>
+  <canvas id="hero3d"></canvas>
+  <img class="fallback" src="assets/logo/jl-mark-white.png" alt="">
+  <div class="side"><span class="pixel">IT'S A LIFESTYLE — IT'S A LIFESTYLE — IT'S A LIFESTYLE</span></div>
+  <div class="copy wrap">
+    <div class="tag"><span class="pixel">● NY BASED — EST. 2020</span></div>
+    <h1><span>Just</span><span class="thin">Living</span></h1>
+    <div class="meta">
+      <a class="btn solid" href="#drop">Latest drop</a>
+      <a class="btn" href="#story">The story</a>
+      <div class="mats" aria-label="Logo material">
+        <span class="pixel">Logo:</span>
+        <button data-mat="bone" class="on">Bone</button>
+        <button data-mat="chrome">Chrome</button>
+        <button data-mat="iced">Iced</button>
+        <button data-mat="diamond">Diamond</button>
+        <button data-mat="black">Black</button>
+        <button data-act="explode">Break</button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span class="pixel">Scroll</span><i></i></div>
+</header>
+
+<div class="count" id="countdown"></div>
+<div class="ticker" aria-hidden="true"><div class="track" id="ticker"></div></div>
+
+<section class="drop" id="drop">
+  <div class="wrap grid">
+    <div class="rv">
+      <div class="tilt"><div class="card" id="drop-card" data-tilt>
+        <img src="assets/products/crown-tee-front.jpg" alt="Just Living — Crown of Thorns tee, front">
+        <img class="back" src="assets/products/crown-tee-back.jpg" alt="Just Living — Crown of Thorns tee, back">
+      </div></div>
+      <div class="flip"><button class="on" data-side="front">Front</button><button data-side="back">Back</button></div>
+    </div>
+    <div class="rv">
+      <span class="pill">Latest drop — sold out</span>
+      <h2 class="display">Crown<br>of Thorns</h2>
+      <p>Heavyweight boxy tee. Oversized front print, cracked-ink texture, and the receipt on the back: total debt, paid. Designed in New York, made to be lived in.</p>
+      <div class="row">
+        <span class="price">$60</span>
+        <a class="btn solid" href="product-crown-of-thorns-tee.html">View</a>
+        <button class="btn" data-notify="crown-of-thorns-tee">Notify me on restock</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shop">
+  <div class="wrap">
+    <div class="head rv">
+      <h2 class="display">Shop</h2>
+      <p>Everything that has dropped so far. Every piece is sold out right now. Restocks and new pieces hit Instagram first.</p>
+    </div>
+    <div class="filters rv" id="filters">
+      <button class="on" data-f="all">All</button><button data-f="tees">Tees</button><button data-f="packs">Essentials</button><button data-f="hats">Hats</button><button data-f="footwear">Footwear</button><button data-f="sets">Sets</button>
+    </div>
+    <div class="products" id="products"></div>
+  </div>
+</section>
+
+<section class="look" id="lookbook">
+  <div class="wrap">
+    <div class="head rv">
+      <h2 class="display">Worn by<br>the city</h2>
+      <p>Tag <a href="https://instagram.com/1justliving1" target="_blank" rel="noopener"><strong>@1justliving1</strong></a> to be featured.</p>
+    </div>
+    <div id="igwall">
+      <div class="masonry rv">
+        <div class="tile"><img src="assets/products/sneaker-red-rooftop.jpg" alt="" loading="lazy"></div>
+        <div class="tile"><img src="assets/products/pirate-tee.jpg" alt="" loading="lazy"></div>
+        <div class="tile ph"><img src="assets/logo/jl-mark-white.png" alt=""><span class="pixel">Tag us · @1justliving1</span></div>
+        <div class="tile"><img src="assets/products/sneaker-red-heel.jpg" alt="" loading="lazy"></div>
+        <div class="tile ph"><img src="assets/logo/jl-mark-white.png" alt=""><span class="pixel">Your photo here</span></div>
+        <div class="tile"><img src="assets/products/blue-set.jpg" alt="" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="story">
+  <div class="wrap grid">
+    <div class="rv"><canvas id="wordmark3d"></canvas><div id="story-video"></div></div>
+    <div class="text rv">
+      <span class="pixel">The story</span>
+      <h2 class="display" style="margin:12px 0 22px">Just<br>Living</h2>
+      <p><strong>It's a lifestyle.</strong> Just Living started in New York in 2020: a reminder that you don't need permission to live fully, right now.</p>
+      <p>The mark is an anchor built from bones. The bones are what's left when everything else is stripped away. The anchor is what keeps you grounded while you do it.</p>
+      <p><em>(Placeholder copy — swap in the brand's own words.)</em></p>
+      <div class="stats">
+        <div><b>2020</b><small>Established</small></div>
+        <div><b>NYC</b><small>Designed in</small></div>
+        <div><b>1 of 1</b><small>Mentality</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alerts" id="alerts">
+  <div class="wrap grid">
+    <div class="rv"><h2 class="display">Restock<br>alerts</h2></div>
+    <div class="rv">
+      <p>Everything is gone right now. Get the text before the next drop or restock goes on the feed.</p>
+      <form id="alerts-form">
+        <input id="alerts-email" type="text" inputmode="email" placeholder="Email or phone" required autocomplete="email">
+        <button class="btn" type="submit">Notify me</button>
+      </form>
+      <span class="pixel" id="alerts-msg">No spam. Drops, restocks, that's it.</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="top">
+      <div><img class="wm" src="assets/logo/wordmark-white.png" alt="Just Living, est. 2020"><p style="color:var(--ink-dim);margin-top:16px;max-width:300px">Just Living LLC. New York. It's a lifestyle.</p></div>
+      <ul><li>Shop</li><li><a href="index.html#shop">Tees</a></li><li><a href="index.html#shop">Essentials</a></li><li><a href="index.html#shop">Hats</a></li><li><a href="index.html#shop">Footwear</a></li></ul>
+      <ul><li>Brand</li><li><a href="index.html#story">Story</a></li><li><a href="index.html#lookbook">Lookbook</a></li><li><a href="index.html#drop">Drops</a></li></ul>
+      <ul><li>Help</li><li><a href="info.html#shipping">Shipping</a></li><li><a href="info.html#returns">Returns</a></li><li><a href="info.html#sizing">Size guide</a></li><li><a href="info.html#contact">Contact &amp; wholesale</a></li><li><a href="https://instagram.com/1justliving1" target="_blank" rel="noopener">Instagram</a></li></ul>
+    </div>
+    <div class="big">Just Living</div>
+    <div class="bottom"><span>© 2026 Just Living LLC</span><span><a href="info.html#privacy">Privacy</a><a href="info.html#terms">Terms</a></span></div>
+  </div>
+</footer>
+
+<script type="module">
+import { initStore, renderGrid, bindFilters, tilt, subscribe, supportsWebGL } from './js/store.js';
+import { CONFIG } from './js/config.js';
+
+// 3D hero and story wordmark first (flat logo fallback when WebGL is unavailable)
+if (supportsWebGL()) {
+  const { createLogo3D } = await import('./js/jl3d.js');
+  const hero = createLogo3D(document.getElementById('hero3d'), {
+    svg: 'assets/logo/jl-mark.svg', material: 'bone', fit: 0.74, offsetX: 0.22, offsetY: 0.08,
+    narrowBelow: 1000, fitMobile: 0.5, offsetXMobile: 0.1, offsetYMobile: 0.2,
+    scrollRotate: 1.4, parallax: 0.6,
+  });
+  document.querySelectorAll('.mats button').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.act === 'explode') {
+      const exploded = hero.assembled < 0.5;
+      exploded ? hero.assemble() : hero.explode();
+      b.textContent = exploded ? 'Break' : 'Rebuild';
+      return;
+    }
+    hero.setMaterial(b.dataset.mat);
+    document.querySelectorAll('.mats [data-mat]').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  createLogo3D(document.getElementById('wordmark3d'), {
+    svg: 'assets/logo/wordmark.svg', material: 'bone', depth: 90, bevel: 16, fit: 0.86,
+    curveSegments: 6, assemble: false, parallax: 0.35, exposure: 1.05,
+  });
+} else {
+  document.body.classList.add('no-webgl');
+  document.getElementById('wordmark3d').replaceWith(Object.assign(new Image(), { src: 'assets/logo/wordmark-white.png', alt: 'Just Living' }));
+}
+
+// store: products, cart, alerts, countdown, menu
+const products = await initStore();
+renderGrid(document.getElementById('products'), products);
+bindFilters(document.getElementById('filters'), document.getElementById('products'));
+tilt(document.getElementById('drop'));
+
+// optional campaign video in the story section
+if (CONFIG.STORY_VIDEO) {
+  document.getElementById('story-video').innerHTML = `<video src="${CONFIG.STORY_VIDEO}" autoplay muted loop playsinline></video>`;
+}
+
+// featured drop: front / back
+document.querySelectorAll('.flip button').forEach(b => b.addEventListener('click', () => {
+  document.getElementById('drop-card').classList.toggle('flipped', b.dataset.side === 'back');
+  document.querySelectorAll('.flip button').forEach(x => x.classList.toggle('on', x === b));
+}));
+
+// ticker
+const t = document.getElementById('ticker');
+const words = ['Just Living', 'New York', 'Est. 2020', "It's a lifestyle", 'Tag us to be featured', '1 of 1'];
+t.innerHTML = [...words, ...words, ...words, ...words].map(w => `<span>${w}</span>`).join('');
+
+// general drop-alert form
+document.getElementById('alerts-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('alerts-msg'), input = document.getElementById('alerts-email');
+  try {
+    const res = await subscribe(input.value.trim(), { restock_product: 'next-drop' });
+    msg.textContent = res.saved === 'klaviyo' ? "You're on the list." : 'Saved. (Connect Klaviyo in js/config.js to send real texts and emails.)';
+    input.value = '';
+  } catch (err) { msg.textContent = err.message; }
+});
+
+// skyline parallax
+const bg = document.getElementById('hero-bg');
+addEventListener('scroll', () => { const y = Math.min(scrollY, innerHeight); bg.style.transform = `translateY(${y * 0.25}px)`; }, { passive: true });
+
+// reveal on scroll
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

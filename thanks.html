@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order placed — Just Living</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/logo/jl-mark-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<style>
+.thanks{min-height:100svh;display:grid;place-items:center;text-align:center;padding:120px 24px 80px}
+.thanks img{width:120px;margin:0 auto 28px}
+.thanks h1{font-family:var(--display);font-size:clamp(56px,10vw,140px);line-height:.9;text-transform:uppercase}
+.thanks p{color:var(--ink-dim);max-width:460px;margin:20px auto 32px;font-size:17px}
+</style>
+</head>
+<body class="grain">
+<nav class="nav">
+  <a class="logo" href="index.html" aria-label="Just Living"><img src="assets/logo/jl-mark-white.png" alt="JL"></a>
+  <ul><li><a href="index.html#shop">Shop</a></li><li><a href="index.html#story">Story</a></li><li><a href="info.html">Info</a></li></ul>
+  <div class="right"><a class="cart" href="#cart" data-cart-count>CART (0)</a><button class="burger" aria-label="Menu">☰</button></div>
+</nav>
+<main class="thanks">
+  <div>
+    <img src="assets/logo/jl-mark-white.png" alt="">
+    <span class="pixel">Order placed</span>
+    <h1>Just<br>Living</h1>
+    <p>You're in. A receipt is on its way from Stripe, and tracking follows as soon as the label prints. Tag <strong>@1justliving1</strong> when it lands.</p>
+    <a class="btn solid" href="index.html">Back to the site</a>
+  </div>
+</main>
+<script type="module">
+import { initStore, clearCart } from './js/store.js';
+await initStore();
+clearCart();
+</script>
+</body>
+</html>

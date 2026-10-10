@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JL Logo 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+  :root{--bg:#070707;--ink:#ece6d8}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:'Silkscreen',monospace;overflow:hidden}
+  body.light{--bg:#ece6d8;--ink:#0a0a0a}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  .ui{position:fixed;left:16px;right:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;z-index:2}
+  .ui span{font-size:10px;letter-spacing:.16em;opacity:.6;margin-right:6px;text-transform:uppercase}
+  button{font:inherit;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:10px 14px;border:1px solid currentColor;border-radius:999px;background:transparent;color:inherit;cursor:pointer}
+  button.on,button:hover{background:var(--ink);color:var(--bg)}
+  .title{position:fixed;top:16px;left:16px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;z-index:2}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="title">Just Living — 3D logo playground</div>
+<div class="ui">
+  <span>Logo</span>
+  <button data-svg="assets/logo/jl-mark.svg" class="on">JL mark</button>
+  <button data-svg="assets/logo/wordmark.svg">Wordmark</button>
+  <span style="margin-left:12px">Material</span>
+  <button data-mat="bone" class="on">Bone</button>
+  <button data-mat="chrome">Chrome</button>
+  <button data-mat="iced">Iced</button>
+  <button data-mat="diamond">Diamond</button>
+  <button data-mat="black">Black</button>
+  <span style="margin-left:12px">Motion</span>
+  <button data-act="explode">Break / rebuild</button>
+  <button data-act="spin" class="on">Spin</button>
+  <button data-act="bg">Light / dark</button>
+</div>
+<script type="module">
+import { createLogo3D } from './js/jl3d.js';
+const canvas = document.getElementById('c');
+let mat = 'bone', svg = 'assets/logo/jl-mark.svg', spin = true, logo;
+function build() {
+  logo && logo.destroy();
+  const isWord = svg.includes('wordmark');
+  logo = createLogo3D(canvas, { svg, material: mat, spin, fit: isWord ? 0.86 : 0.8,
+    depth: isWord ? 90 : 200, bevel: isWord ? 16 : 36, curveSegments: isWord ? 6 : 10, parallax: 0.7 });
+}
+build();
+document.querySelectorAll('[data-svg]').forEach(b => b.onclick = () => { svg = b.dataset.svg; document.querySelectorAll('[data-svg]').forEach(x => x.classList.toggle('on', x === b)); build(); });
+document.querySelectorAll('[data-mat]').forEach(b => b.onclick = () => { mat = b.dataset.mat; logo.setMaterial(mat); document.querySelectorAll('[data-mat]').forEach(x => x.classList.toggle('on', x === b)); });
+document.querySelector('[data-act=explode]').onclick = () => (logo.assembled < 0.5 ? logo.assemble() : logo.explode());
+document.querySelector('[data-act=spin]').onclick = e => { spin = !spin; e.target.classList.toggle('on', spin); build(); };
+document.querySelector('[data-act=bg]').onclick = () => document.body.classList.toggle('light');
+</script>
+</body>
+</html>

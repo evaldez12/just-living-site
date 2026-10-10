@@ -1,0 +1,200 @@
+[
+  {
+    "id": "crown-of-thorns-tee",
+    "name": "Crown of Thorns Tee",
+    "price": 60,
+    "category": "tees",
+    "color": "Black",
+    "images": [
+      "crown-tee-front.jpg",
+      "crown-tee-back.jpg"
+    ],
+    "description": "Heavyweight boxy tee. Oversized front print with cracked-ink texture, and the receipt on the back: sin, regret, past mistakes, shame. Total debt, paid. Eternal life.",
+    "details": [
+      "Heavyweight cotton, boxy drop-shoulder cut",
+      "Front and back screen print, cracked-ink finish",
+      "Just Living hit on the chest",
+      "Designed in New York"
+    ],
+    "sizeChart": "tee",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "featured": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "pirate-tee",
+    "name": "Pirate Tee",
+    "price": 55,
+    "category": "tees",
+    "color": "White",
+    "images": [
+      "pirate-tee.jpg"
+    ],
+    "description": "Full-color pirate print standing on the bone anchor, ship on the horizon, blurred Just Living script above. Clean white tee, relaxed fit.",
+    "details": [
+      "Midweight cotton, relaxed fit",
+      "Full-color front print",
+      "Woven Just Living neck label",
+      "Designed in New York"
+    ],
+    "sizeChart": "tee",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "royal-set",
+    "name": "Royal Set",
+    "price": 110,
+    "category": "sets",
+    "color": "Royal blue",
+    "images": [
+      "blue-set.jpg"
+    ],
+    "description": "Tee and mesh shorts. Royal blue Just Living script with photo collage front and back, and the quote: yesterday is history, tomorrow is a mystery, today is a gift of God, which is why we call it the present.",
+    "details": [
+      "Boxy tee with front and back print",
+      "All-over print mesh shorts with JL mark",
+      "Sold as a set",
+      "Designed in New York"
+    ],
+    "sizeChart": "tee",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "jl-sneaker-red",
+    "name": "JL Sneaker",
+    "price": 180,
+    "category": "footwear",
+    "color": "Red / white / grey",
+    "images": [
+      "sneaker-red-heel.jpg",
+      "sneaker-red-rooftop.jpg"
+    ],
+    "description": "Red suede and white leather low-top. Just Living on the heel, three bone anchors on the midsole, Just Living stamped into the outsole.",
+    "details": [
+      "Suede and leather upper",
+      "Perforated toe box",
+      "Bone anchors on the midsole, both sides",
+      "Just Living outsole stamp"
+    ],
+    "sizeChart": "shoe",
+    "sizes": [
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "chosen-trucker",
+    "name": "Chosen Trucker",
+    "price": 45,
+    "category": "hats",
+    "color": "Black",
+    "images": [
+      "trucker-front.jpg",
+      "trucker-side.jpg"
+    ],
+    "description": "Black mesh-back trucker. Just Living across the front in black crystal lettering, Chosen with a rose on the side, JL mark on the button.",
+    "details": [
+      "Crystal front lettering",
+      "Embroidered side panel",
+      "Engraved metal button",
+      "Snapback, one size"
+    ],
+    "sizeChart": "hat",
+    "sizes": [
+      "One size"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "essentials-3-pack-black",
+    "name": "Essentials 3-Pack",
+    "price": 75,
+    "category": "packs",
+    "color": "Black",
+    "images": [
+      "tee-pack-black.jpg"
+    ],
+    "description": "Three black tees with the bone anchor at the hem in white and the Just Living label at the neck. The everyday ones.",
+    "details": [
+      "Three tees per pack",
+      "Small bone anchor hit at the hem",
+      "Printed neck label",
+      "Designed in New York"
+    ],
+    "sizeChart": "tee",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  },
+  {
+    "id": "essentials-3-pack-white",
+    "name": "Essentials 3-Pack",
+    "price": 75,
+    "category": "packs",
+    "color": "White",
+    "images": [
+      "tee-pack-white.jpg"
+    ],
+    "description": "Three white tees with the bone anchor at the hem in black and the Just Living label at the neck.",
+    "details": [
+      "Three tees per pack",
+      "Small bone anchor hit at the hem",
+      "Printed neck label",
+      "Designed in New York"
+    ],
+    "sizeChart": "tee",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": {},
+    "soldOut": true,
+    "paymentLink": ""
+  }
+]

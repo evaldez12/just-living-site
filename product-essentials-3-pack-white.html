@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Essentials 3-Pack — Just Living</title>
+<meta name="description" content="Three white tees with the bone anchor at the hem in black and the Just Living label at the neck.">
+<meta property="og:title" content="Essentials 3-Pack — Just Living">
+<meta property="og:description" content="It's a lifestyle. New York streetwear, est. 2020.">
+<meta property="og:image" content="assets/products/tee-pack-white.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo/jl-mark-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="grain">
+<nav class="nav">
+  <a class="logo" href="index.html" aria-label="Just Living"><img src="assets/logo/jl-mark-white.png" alt="JL"></a>
+  <ul>
+    <li><a href="index.html#drop">Drop</a></li>
+    <li><a href="index.html#shop">Shop</a></li>
+    <li><a href="index.html#lookbook">Lookbook</a></li>
+    <li><a href="index.html#story">Story</a></li>
+    <li><a href="info.html">Info</a></li>
+  </ul>
+  <div class="right">
+    <a class="cart" href="#cart" data-cart-count>CART (0)</a>
+    <button class="burger" aria-label="Menu">☰</button>
+  </div>
+</nav>
+<main class="pdp">
+  <div class="wrap">
+    <p class="crumbs pixel"><a href="index.html">Home</a> / <a href="index.html#shop">Shop</a> / Essentials 3-Pack</p>
+    <div class="grid">
+      <div class="gallery"><img src="assets/products/tee-pack-white.jpg" alt="Essentials 3-Pack"></div>
+      <div class="sticky">
+        <h1>Essentials 3-Pack</h1>
+        <p class="sub">White</p>
+        <div class="price gone">$75<span class="flag">Sold out</span></div>
+        <p class="desc">Three white tees with the bone anchor at the hem in black and the Just Living label at the neck.</p>
+        <p class="pixel" style="margin-bottom:10px">Size</p>
+        <div class="sizes" id="sizes"><button type="button" data-size="S" class=on>S</button><button type="button" data-size="M">M</button><button type="button" data-size="L">L</button><button type="button" data-size="XL">XL</button><button type="button" data-size="XXL">XXL</button></div>
+        <div class="cta"><button class="btn solid wide" data-notify="essentials-3-pack-white">Notify me when it's back</button><a class="btn wide" href="index.html#shop">Back to shop</a></div>
+        <details open><summary>Details</summary><ul><li>Three tees per pack</li><li>Small bone anchor hit at the hem</li><li>Printed neck label</li><li>Designed in New York</li></ul></details>
+        <details><summary>Size guide</summary><div class="tablewrap"><table class="chart"><thead><tr><th>Size</th><th>Chest</th><th>Length</th><th>Shoulder</th></tr></thead><tbody><tr><td>S</td><td>22</td><td>27.5</td><td>22</td></tr><tr><td>M</td><td>23</td><td>28.5</td><td>23</td></tr><tr><td>L</td><td>24</td><td>29.5</td><td>24</td></tr><tr><td>XL</td><td>25</td><td>30.5</td><td>25</td></tr><tr><td>XXL</td><td>26</td><td>31.5</td><td>26</td></tr></tbody></table></div><p class="dim" style="font-size:13px">Boxy fit. Size down for a regular fit. Sample measurements, replace with the factory spec sheet.</p></details>
+        <details><summary>Shipping &amp; returns</summary><ul><li>Ships from New York in 2 to 4 business days.</li><li>US shipping $8, free over $150. International at checkout.</li><li>Unworn items can be exchanged within 14 days. See <a href="info.html#returns" style="text-decoration:underline">returns</a>.</li></ul></details>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="top">
+      <div><img class="wm" src="assets/logo/wordmark-white.png" alt="Just Living, est. 2020"><p style="color:var(--ink-dim);margin-top:16px;max-width:300px">Just Living LLC. New York. It's a lifestyle.</p></div>
+      <ul><li>Shop</li><li><a href="index.html#shop">Tees</a></li><li><a href="index.html#shop">Essentials</a></li><li><a href="index.html#shop">Hats</a></li><li><a href="index.html#shop">Footwear</a></li></ul>
+      <ul><li>Brand</li><li><a href="index.html#story">Story</a></li><li><a href="index.html#lookbook">Lookbook</a></li><li><a href="index.html#drop">Drops</a></li></ul>
+      <ul><li>Help</li><li><a href="info.html#shipping">Shipping</a></li><li><a href="info.html#returns">Returns</a></li><li><a href="info.html#sizing">Size guide</a></li><li><a href="info.html#contact">Contact &amp; wholesale</a></li><li><a href="https://instagram.com/1justliving1" target="_blank" rel="noopener">Instagram</a></li></ul>
+    </div>
+    <div class="big">Just Living</div>
+    <div class="bottom"><span>© 2026 Just Living LLC</span><span><a href="info.html#privacy">Privacy</a><a href="info.html#terms">Terms</a></span></div>
+  </div>
+</footer>
+<script type="module">
+import { initStore } from './js/store.js';
+await initStore();
+const sizes = document.getElementById('sizes'), add = document.getElementById('add');
+sizes.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  sizes.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  if (add) add.dataset.size = b.dataset.size;
+});
+</script>
+</body>
+</html>
