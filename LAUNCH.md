@@ -7,6 +7,8 @@ the steps that connect it to the real world. Each one is a single value in `js/c
 or `products.json`.
 
 ## 1. Host on GitHub Pages (Ed)
+Done on 2026-10-10: repo https://github.com/evaldez12/just-living-site (public, required for
+Pages on a free account), live at https://evaldez12.github.io/just-living-site/.
 1. Create a repo (private is fine) and push this `justliving` folder as the root.
    `.nojekyll` is already there so GitHub serves the files as-is.
 2. Repo → Settings → Pages → Source: Deploy from branch → `main` / root. The site is live at
