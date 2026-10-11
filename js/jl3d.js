@@ -7,10 +7,11 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // Procedural pavé normal map: a tiling grid of domed stones, so the "diamond"
 // material sparkles as the logo turns. Built once, shared by every instance.
-let paveNormal = null;
+let paveNormal = null, paveColor = null;
+function paveMap() { pave(); return paveColor; }
 function pave() {
   if (paveNormal) return paveNormal;
-  const S = 512, n = 10, cell = S / n;
+  const S = 512, n = 9, cell = S / n;
   const c = document.createElement('canvas'); c.width = c.height = S;
   const ctx = c.getContext('2d');
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, S, S);
@@ -18,13 +19,14 @@ function pave() {
     const cy = (j + 0.5) * cell, r = cell * 0.5;
     for (const cx of [(i + 0.5) * cell + (j % 2 ? cell / 2 : 0), (i + 0.5) * cell + (j % 2 ? cell / 2 : 0) - S]) {
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      g.addColorStop(0, '#fff'); g.addColorStop(0.55, '#c8c8c8'); g.addColorStop(0.9, '#303030'); g.addColorStop(1, '#000');
+      // flat table in the middle, steep crown facets, a tiny dark seat between stones
+      g.addColorStop(0, '#fff'); g.addColorStop(0.28, '#f4f4f4'); g.addColorStop(0.5, '#a8a8a8'); g.addColorStop(0.8, '#3a3a3a'); g.addColorStop(0.95, '#101010'); g.addColorStop(1, '#000');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
     }
   }
   // height -> tangent-space normal map
   const h = ctx.getImageData(0, 0, S, S).data;
-  const out = ctx.createImageData(S, S), d = out.data, k = 6.0;
+  const out = ctx.createImageData(S, S), d = out.data, k = 9.0;
   const H = (x, y) => h[(((y + S) % S) * S + ((x + S) % S)) * 4] / 255;
   for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
     const dx = (H(x + 1, y) - H(x - 1, y)) * k, dy = (H(x, y + 1) - H(x, y - 1)) * k;
@@ -34,16 +36,39 @@ function pave() {
   ctx.putImageData(out, 0, 0);
   paveNormal = new THREE.CanvasTexture(c);
   paveNormal.wrapS = paveNormal.wrapT = THREE.RepeatWrapping;
-  paveNormal.repeat.set(1 / 620, 1 / 620); // extrude UVs are in SVG units: ~62 units per stone
+  paveNormal.repeat.set(1 / 620, 1 / 620); // extrude UVs are in SVG units: ~69 units per stone
+  // colour: gold metal bed showing between the stones, stones near-white with a grey edge
+  const c2 = document.createElement('canvas'); c2.width = c2.height = S;
+  const x2 = c2.getContext('2d');
+  x2.fillStyle = '#b8902e'; x2.fillRect(0, 0, S, S);
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    const cy = (j + 0.5) * cell, r = cell * 0.46;
+    for (const cx of [(i + 0.5) * cell + (j % 2 ? cell / 2 : 0), (i + 0.5) * cell + (j % 2 ? cell / 2 : 0) - S]) {
+      const g = x2.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, '#eef1f6'); g.addColorStop(0.92, '#9aa0ab'); g.addColorStop(1, '#6f6a5a');
+      x2.fillStyle = g; x2.beginPath(); x2.arc(cx, cy, r, 0, Math.PI * 2); x2.fill();
+    }
+  }
+  paveColor = new THREE.CanvasTexture(c2);
+  paveColor.colorSpace = THREE.SRGBColorSpace;
+  paveColor.wrapS = paveColor.wrapT = THREE.RepeatWrapping;
+  paveColor.repeat.set(1 / 620, 1 / 620);
   return paveNormal;
 }
 
+const gold = () => new THREE.MeshPhysicalMaterial({
+  color: 0xf0c050, metalness: 1, roughness: 0.14, envMapIntensity: 2.2,
+  clearcoat: 0.5, clearcoatRoughness: 0.2,
+});
+const paveStones = () => new THREE.MeshPhysicalMaterial({
+  // diamonds are not metal: near-white dielectric, mirror-smooth, very high IOR, strong reflections
+  map: paveMap(), color: 0xffffff, metalness: 0.75, roughness: 0.07, ior: 2.4, specularIntensity: 1,
+  envMapIntensity: 2.4, normalMap: pave(), normalScale: new THREE.Vector2(3, 3),
+  clearcoat: 1, clearcoatRoughness: 0.03, iridescence: 0.25, iridescenceIOR: 2.0,
+});
 const MATERIALS = {
-  diamond: () => new THREE.MeshPhysicalMaterial({
-    color: 0xf2f5ff, metalness: 0.9, roughness: 0.06, envMapIntensity: 3.2,
-    normalMap: pave(), normalScale: new THREE.Vector2(1.6, 1.6),
-    clearcoat: 1, clearcoatRoughness: 0.04, iridescence: 0.45, iridescenceIOR: 1.8,
-  }),
+  gold,
+  diamond: () => [paveStones(), gold()],   // pavé face, gold rim and walls like the real pendant
   bone: () => new THREE.MeshPhysicalMaterial({
     color: 0xe6dfcf, roughness: 0.6, metalness: 0.0,
     clearcoat: 0.25, clearcoatRoughness: 0.5, sheen: 0.4, sheenColor: 0xfff6e6,
@@ -54,11 +79,6 @@ const MATERIALS = {
   black: () => new THREE.MeshPhysicalMaterial({
     color: 0x111111, roughness: 0.32, metalness: 0.1,
     clearcoat: 1.0, clearcoatRoughness: 0.18,
-  }),
-  iced: () => new THREE.MeshPhysicalMaterial({
-    color: 0xf4f7ff, roughness: 0.02, metalness: 0.55, transmission: 0.35, thickness: 0.6,
-    ior: 2.4, clearcoat: 1, clearcoatRoughness: 0, envMapIntensity: 2.8, iridescence: 0.6,
-    iridescenceIOR: 1.6, specularIntensity: 1,
   }),
 };
 
@@ -107,6 +127,8 @@ export function createLogo3D(canvas, opts = {}) {
   const key = new THREE.DirectionalLight(0xfff4e0, 1.7); key.position.set(3, 4, 5); scene.add(key);
   const rim = new THREE.DirectionalLight(0xbfd4ff, 1.4); rim.position.set(-4, -2, -3); scene.add(rim);
   scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+  const sp1 = new THREE.PointLight(0xffffff, 60, 0, 2); sp1.position.set(2.5, 3, 4); scene.add(sp1);
+  const sp2 = new THREE.PointLight(0xfff0d0, 40, 0, 2); sp2.position.set(-3, 1.5, 3.5); scene.add(sp2);
 
   const root = new THREE.Group();   // handles idle rotation + parallax
   const logo = new THREE.Group();   // centered logo
