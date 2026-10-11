@@ -4,6 +4,10 @@
 import * as THREE from 'three';
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // Procedural pavé normal map: a tiling grid of domed stones, so the "diamond"
 // material sparkles as the logo turns. Built once, shared by every instance.
@@ -66,8 +70,12 @@ const paveStones = () => new THREE.MeshPhysicalMaterial({
   envMapIntensity: 2.4, normalMap: pave(), normalScale: new THREE.Vector2(3, 3),
   clearcoat: 1, clearcoatRoughness: 0.03, iridescence: 0.25, iridescenceIOR: 2.0,
 });
+// neon tube: the colour comes from emission, the body is dark glass
+const neon = (hex = 0xfff1d6) => new THREE.MeshStandardMaterial({
+  color: 0x0a0a0a, emissive: hex, emissiveIntensity: 2.6, roughness: 0.35, metalness: 0.1,
+});
 const MATERIALS = {
-  gold,
+  gold, neon: () => neon(),
   diamond: () => [paveStones(), gold()],   // pavé face, gold rim and walls like the real pendant
   bone: () => new THREE.MeshPhysicalMaterial({
     color: 0xe6dfcf, roughness: 0.6, metalness: 0.0,
@@ -109,6 +117,13 @@ export function createLogo3D(canvas, opts = {}) {
     alpha: true,
     exposure: 1.15,
     onReady: null,
+    bloom: false,        // post-process glow (used for the neon look); renders on an opaque dark background
+    bloomStrength: 0.55, bloomRadius: 0.3, bloomThreshold: 0.7,
+    neonIntensity: 1.3,
+    background: 0x070707,
+    neonColor: 0xfff1d6, // warm white tube
+    neonAccent: null,    // optional second colour for the small lettering (EST. 2020)
+    lightUp: false,      // start dark and light the letters up in sequence on api.lightUp()
   }, opts);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: o.alpha, powerPreference: 'high-performance' });
@@ -130,6 +145,16 @@ export function createLogo3D(canvas, opts = {}) {
   const sp1 = new THREE.PointLight(0xffffff, 60, 0, 2); sp1.position.set(2.5, 3, 4); scene.add(sp1);
   const sp2 = new THREE.PointLight(0xfff0d0, 40, 0, 2); sp2.position.set(-3, 1.5, 3.5); scene.add(sp2);
 
+  let composer = null;
+  if (o.bloom) {
+    scene.background = new THREE.Color(o.background);
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), o.bloomStrength, o.bloomRadius, o.bloomThreshold));
+    composer.addPass(new OutputPass());
+  }
+  const isNeon = o.material === 'neon';
+
   const root = new THREE.Group();   // handles idle rotation + parallax
   const logo = new THREE.Group();   // centered logo
   root.add(logo); scene.add(root);
@@ -142,10 +167,12 @@ export function createLogo3D(canvas, opts = {}) {
   const clock = new THREE.Clock();
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   let scrollY = 0;
+  let litT = -1e9; // time since lightUp() was called
 
   function resize() {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
     renderer.setSize(w, h, false);
+    composer && composer.setSize(w, h);
     camera.aspect = w / h; camera.updateProjectionMatrix();
     // keep the logo the same visual size across aspect ratios
     const vFov = THREE.MathUtils.degToRad(camera.fov);
@@ -185,8 +212,15 @@ export function createLogo3D(canvas, opts = {}) {
       const c = new THREE.Vector3(); g.boundingBox.getCenter(c);
       g.translate(-c.x, -c.y, -c.z);
       g.computeVertexNormals();
-      const mesh = new THREE.Mesh(g, material);
       const home = new THREE.Vector3(c.x - center.x, -(c.y - center.y), 0); // flip Y (SVG is y-down)
+      let mat = material;
+      if (isNeon) {
+        // small shapes sitting low in the wordmark are the "EST. 2020" line
+        const gs = new THREE.Vector3(); g.boundingBox.getSize(gs);
+        const small = gs.y < size.y * 0.2 && home.y < -size.y * 0.15;
+        mat = neon(small && o.neonAccent != null ? o.neonAccent : o.neonColor);
+      }
+      const mesh = new THREE.Mesh(g, mat);
       mesh.position.copy(home);
       mesh.scale.y = -1; // flip the geometry itself too, so winding/normals stay right
       const r = (a) => (Math.random() - 0.5) * a;
@@ -194,9 +228,12 @@ export function createLogo3D(canvas, opts = {}) {
         pos: new THREE.Vector3(home.x + r(size.x * 1.6), home.y + r(size.y * 1.6), r(size.x * 1.2) + size.x * 0.6),
         rot: new THREE.Euler(r(Math.PI * 1.5), r(Math.PI * 1.5), r(Math.PI)),
       };
-      pieces.push({ mesh, home, start, delay: i * 0.09, lift: 0, pop: 0, spin: 0, kick: 0 });
+      pieces.push({ mesh, home, start, delay: i * 0.09, lift: 0, pop: 0, spin: 0, kick: 0,
+        lit: o.lightUp ? 0 : 1, litTarget: o.lightUp ? 0 : 1, flick: 0, order: 0 });
       logo.add(mesh);
     });
+    // light-up order: left to right across the sign
+    [...pieces].sort((a, b) => a.home.x - b.home.x).forEach((p, i) => { p.order = i; });
     ready = true;
     resize();
     o.onReady && o.onReady(api);
@@ -207,6 +244,7 @@ export function createLogo3D(canvas, opts = {}) {
     material = MATERIALS[name]();
     pieces.forEach(p => { p.mesh.material = material; });
   }
+  function lightUp() { litT = 0; pieces.forEach(p => { p.litTarget = 1; }); }
   function assemble() { assembleDir = 1; }
   function explode() { assembleDir = -1; }
 
@@ -297,6 +335,20 @@ export function createLogo3D(canvas, opts = {}) {
       p.mesh.rotation.set(p.start.rot.x * (1 - k) + p.lift * 0.12, p.start.rot.y * (1 - k) + p.spin, p.start.rot.z * (1 - k) - p.lift * 0.08);
     });
 
+    if (isNeon) {
+      litT += dt;
+      for (const p of pieces) {
+        const m = p.mesh.material;
+        if (p.litTarget > p.lit) p.lit = Math.min(1, p.lit + (litT > p.order * 0.07 ? dt * 6 : 0));
+        if (Math.random() < 0.0025) p.flick = 1;             // a tube that stutters now and then
+        p.flick *= 0.82;
+        const buzz = 1 - p.flick * (0.5 + Math.random() * 0.5);
+        m.emissiveIntensity = o.neonIntensity * p.lit * buzz + 0.04;
+        // the glass goes from dark to faintly warm as it lights
+        m.color.setScalar(0.04 + p.lit * 0.12);
+      }
+    }
+
     // drag inertia
     if (!drag.on) { drag.vx *= 0.94; drag.vy *= 0.94; drag.rx += drag.vx; drag.ry += drag.vy; }
     drag.rx = THREE.MathUtils.clamp(drag.rx, -0.9, 0.9);
@@ -309,11 +361,11 @@ export function createLogo3D(canvas, opts = {}) {
     root.rotation.y = idleY + mouse.x * o.parallax + (scrollY / 1000) * o.scrollRotate + drag.ry;
     root.rotation.x = Math.sin(t * 0.6) * 0.06 + mouse.y * o.parallax * 0.55 + drag.rx;
     logo.position.y = Math.sin(t * 0.9) * 0.05;
-    renderer.render(scene, camera);
+    composer ? composer.render() : renderer.render(scene, camera);
   }
   frame();
 
-  const api = { renderer, scene, camera, root, logo, pieces, setMaterial, assemble, explode,
+  const api = { renderer, scene, camera, root, logo, pieces, setMaterial, assemble, explode, lightUp,
     get assembled() { return assembleT; },
     destroy() { cancelAnimationFrame(raf); renderer.dispose(); } };
   return api;
