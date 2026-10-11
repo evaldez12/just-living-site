@@ -246,3 +246,79 @@ table.chart th{font-family:var(--pixel);font-size:10px;letter-spacing:.14em;text
 .rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.drawer{transition:none}}
+
+/* ===== review variants: a version switcher pinned bottom-left ===== */
+.variants{position:fixed;left:16px;bottom:16px;z-index:45;display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:var(--ink)}
+.variants span{font-family:var(--pixel);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-right:4px}
+.variants a{font-family:var(--pixel);font-size:10px;letter-spacing:.1em;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);color:var(--ink)}
+.variants a.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+@media(max-width:760px){.variants{bottom:12px;left:12px}}
+
+/* ===== Option B: "Bone" — light, editorial ===== */
+[data-theme="bone"]{--bg:#ece6d8;--bg-2:#e4ddcc;--ink:#0a0a0a;--ink-dim:#5e5950;--line:rgba(10,10,10,.16);color-scheme:light}
+[data-theme="bone"] .hero{background:radial-gradient(ellipse 70% 60% at 65% 45%,#f6f1e6 0%,#ece6d8 55%,#e1dac9 100%)}
+[data-theme="bone"] .hero .bg img{opacity:.22;filter:grayscale(1) invert(1) contrast(1.3)}
+[data-theme="bone"] .hero .bg::after{background:linear-gradient(to bottom,rgba(236,230,216,.7) 0%,rgba(236,230,216,0) 40%,rgba(236,230,216,.5) 80%,#ece6d8 100%)}
+[data-theme="bone"] .hero .copy::before{background:linear-gradient(to top,rgba(236,230,216,.95) 0%,rgba(236,230,216,.7) 40%,rgba(236,230,216,0) 100%)}
+[data-theme="bone"] .hero h1{text-shadow:none}
+[data-theme="bone"] .hero h1 .thin{filter:none}
+[data-theme="bone"] .hero .fallback{filter:invert(1)}
+[data-theme="bone"] .mats button{background:rgba(236,230,216,.7)}
+[data-theme="bone"] .btn.solid:hover{background:#2a2a2a;color:#ece6d8}
+[data-theme="bone"] .count,[data-theme="bone"] .ticker{background:#0a0a0a;color:#ece6d8}
+[data-theme="bone"] .count .pixel{color:#8f8a80}
+[data-theme="bone"] .count .mini{border-color:rgba(236,230,216,.3);color:#ece6d8}
+[data-theme="bone"] .ticker span::after{background-image:url(../assets/logo/jl-mark-white.png)}
+[data-theme="bone"] .tilt .card{background:#fff;box-shadow:0 30px 60px rgba(0,0,0,.18)}
+[data-theme="bone"] .product,[data-theme="bone"] .product .media{background:#fff}
+[data-theme="bone"] .product .tagp{background:rgba(255,255,255,.8);color:#000}
+[data-theme="bone"] .product .tagp.out{background:var(--red);color:#fff}
+[data-theme="bone"] .look{background:#e4ddcc}
+[data-theme="bone"] .masonry .tile{background:#fff}
+[data-theme="bone"] .masonry .tile.ph{background:linear-gradient(160deg,#fff,#eae4d6)}
+[data-theme="bone"] .masonry .tile.ph img{filter:invert(1);opacity:.45}
+[data-theme="bone"] .alerts{background:#0a0a0a;color:#ece6d8}
+[data-theme="bone"] .alerts h2{color:#ece6d8}
+[data-theme="bone"] .alerts p{color:#a9a399}
+[data-theme="bone"] .alerts input{border-color:#ece6d8;color:#ece6d8}
+[data-theme="bone"] .alerts input::placeholder{color:#8f8a80}
+[data-theme="bone"] .alerts .btn{border-color:#ece6d8;color:#ece6d8}
+[data-theme="bone"] .alerts .btn:hover{background:#ece6d8;color:#000}
+[data-theme="bone"] .alerts .pixel{color:#8f8a80}
+[data-theme="bone"] footer .big{color:#ddd6c5}
+[data-theme="bone"] footer .wm{filter:invert(1)}
+[data-theme="bone"] .drawer{background:#f4efe3}
+[data-theme="bone"] .drawer input,[data-theme="bone"] .drawer select{background:#fff;color:#000}
+[data-theme="bone"] .variants{background:rgba(236,230,216,.8)}
+[data-theme="bone"].grain::after{opacity:.1}
+
+/* ===== Option C: "Red" — the sneaker's energy ===== */
+[data-theme="red"]{--bg:#050505;--bg-2:#0b0b0b;--ink:#f4f1ec;--ink-dim:#9a9590;--red:#e3122b}
+[data-theme="red"] .hero .bg img{opacity:.9;filter:grayscale(1) brightness(1.25) sepia(1) hue-rotate(-58deg) saturate(5) contrast(1.1)}
+[data-theme="red"] .hero .tag .pixel,[data-theme="red"] .side .pixel{color:var(--red)}
+[data-theme="red"] .hero h1 .thin{-webkit-text-stroke:1.5px var(--red)}
+[data-theme="red"] .btn.solid{background:var(--red);color:#fff;border-color:var(--red)}
+[data-theme="red"] .btn.solid:hover{background:#fff;color:#000;border-color:#fff}
+[data-theme="red"] .mats button.on,[data-theme="red"] .filters button.on{background:var(--red);border-color:var(--red);color:#fff}
+[data-theme="red"] .count{background:var(--red);color:#fff;border-color:var(--red)}
+[data-theme="red"] .count .pixel{color:rgba(255,255,255,.75)}
+[data-theme="red"] .count b.num{color:#fff}
+[data-theme="red"] .count .mini{border-color:rgba(255,255,255,.5);color:#fff}
+[data-theme="red"] .count .mini:hover{background:#fff;color:var(--red)}
+[data-theme="red"] .drop .pill{border-color:var(--red);color:#fff;background:var(--red)}
+[data-theme="red"] .drop .pill::before{background:#fff}
+[data-theme="red"] .product .info .price.gone{color:var(--red)}
+[data-theme="red"] .story .stats b{color:var(--red)}
+[data-theme="red"] .alerts{background:var(--red);color:#fff;border-color:var(--red)}
+[data-theme="red"] .alerts h2{color:#fff}
+[data-theme="red"] .alerts p{color:rgba(255,255,255,.82)}
+[data-theme="red"] .alerts input{border-color:#fff;color:#fff}
+[data-theme="red"] .alerts input::placeholder{color:rgba(255,255,255,.6)}
+[data-theme="red"] .alerts .btn{border-color:#fff;color:#fff}
+[data-theme="red"] .alerts .btn:hover{background:#fff;color:var(--red)}
+[data-theme="red"] .alerts .pixel{color:rgba(255,255,255,.7)}
+[data-theme="red"] footer .big{color:#2a0609}
+[data-theme="red"] .variants a.on{background:var(--red);border-color:var(--red);color:#fff}
+[data-theme="bone"] .btn:hover,[data-theme="bone"] .btn.solid,[data-theme="bone"] .mini:hover,[data-theme="bone"] .mini.solid,[data-theme="bone"] .mats button:hover,[data-theme="bone"] .mats button.on,[data-theme="bone"] .filters button:hover,[data-theme="bone"] .filters button.on,[data-theme="bone"] .flip button.on,[data-theme="bone"] .sizes button.on{color:#ece6d8}
+[data-theme="bone"] .btn.solid:hover{color:#fff}
+[data-theme="bone"] .mats button.on,[data-theme="bone"] .mats button:hover{background:#0a0a0a;border-color:#0a0a0a;color:#ece6d8}

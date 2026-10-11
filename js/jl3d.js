@@ -90,9 +90,14 @@ const MATERIALS = {
     clearcoat: 1, clearcoatRoughness: 0.03, iridescence: 0.45, iridescenceIOR: 1.3,
     sheen: 0.6, sheenRoughness: 0.3, sheenColor: 0xffffff, specularIntensity: 1,
   }),
+  red: () => new THREE.MeshPhysicalMaterial({
+    // glossy red, like the bone anchors on the sneaker midsole
+    color: 0xd91125, roughness: 0.28, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.2,
+  }),
   black: () => new THREE.MeshPhysicalMaterial({
-    color: 0x111111, roughness: 0.32, metalness: 0.1,
-    clearcoat: 1.0, clearcoatRoughness: 0.18,
+    // matte-black ceramic with a thin gloss: stays black even against a bright backdrop
+    color: 0x070707, roughness: 0.42, metalness: 0.0, envMapIntensity: 0.35,
+    clearcoat: 0.7, clearcoatRoughness: 0.3, specularIntensity: 0.6,
   }),
 };
 
