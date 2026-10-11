@@ -81,8 +81,11 @@ const MATERIALS = {
     color: 0xe6dfcf, roughness: 0.6, metalness: 0.0,
     clearcoat: 0.25, clearcoatRoughness: 0.5, sheen: 0.4, sheenColor: 0xfff6e6,
   }),
-  chrome: () => new THREE.MeshStandardMaterial({
-    color: 0xffffff, roughness: 0.14, metalness: 1.0, envMapIntensity: 1.6,
+  chrome: () => new THREE.MeshPhysicalMaterial({
+    // white chrome: pearl-white liquid metal, bright reflections with a soft iridescent edge
+    color: 0xf6f6f8, metalness: 0.85, roughness: 0.1, envMapIntensity: 2.0,
+    clearcoat: 1, clearcoatRoughness: 0.04, iridescence: 0.4, iridescenceIOR: 1.3,
+    sheen: 0.6, sheenRoughness: 0.3, sheenColor: 0xffffff, specularIntensity: 1,
   }),
   black: () => new THREE.MeshPhysicalMaterial({
     color: 0x111111, roughness: 0.32, metalness: 0.1,
