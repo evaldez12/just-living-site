@@ -94,6 +94,11 @@ const MATERIALS = {
     // glossy red, like the bone anchors on the sneaker midsole
     color: 0xd91125, roughness: 0.28, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.2,
   }),
+  wire: () => new THREE.MeshBasicMaterial({ color: 0xece6d8, wireframe: true, transparent: true, opacity: 0.55 }),
+  holo: () => [
+    new THREE.MeshBasicMaterial({ color: 0xece6d8, wireframe: true, transparent: true, opacity: 0.35 }),
+    new THREE.MeshBasicMaterial({ color: 0xc8102e, wireframe: true, transparent: true, opacity: 0.5 }),
+  ],
   black: () => new THREE.MeshPhysicalMaterial({
     // matte-black ceramic with a thin gloss: stays black even against a bright backdrop
     color: 0x070707, roughness: 0.42, metalness: 0.0, envMapIntensity: 0.35,

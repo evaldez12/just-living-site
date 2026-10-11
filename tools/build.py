@@ -97,18 +97,6 @@ for p in products:
     (ROOT / f"product-{p['id']}.html").write_text(product_page(p))
 print("product pages:", len(products))
 
-# ---- review variants: same page, different theme + default logo material ----
-VARIANTS = [("option-b.html", "bone", "black", "B", "Option B — Bone"), ("option-c.html", "red", "red", "C", "Option C — Red")]
-for fname, theme, mat, letter, label in VARIANTS:
-    v = index.replace('<body class="grain">', f'<body class="grain" data-theme="{theme}">')
-    v = v.replace("<title>Just Living — NYC</title>", f"<title>Just Living — {label}</title>")
-    v = v.replace("svg: 'assets/logo/jl-mark.svg', material: 'bone', fit: 0.74,", f"svg: 'assets/logo/jl-mark.svg', material: '{mat}', fit: 0.74,")
-    v = v.replace('<button data-mat="bone" class="on">Bone</button>', '<button data-mat="bone">Bone</button>')
-    v = v.replace(f'<button data-mat="{mat}">', f'<button data-mat="{mat}" class="on">')
-    v = v.replace('<a href="index.html" class="on">A</a>', '<a href="index.html">A</a>').replace(f'<a href="{fname}">{letter}</a>', f'<a href="{fname}" class="on">{letter}</a>')
-    (ROOT / fname).write_text(v)
-print("variants:", [v[0] for v in VARIANTS])
-
 # ---- artifact build (claude.ai wraps the page in its own skeleton) ----
 head = re.sub(r"<meta[^>]*>\s*", "", HEAD).replace('<link rel="icon" href="assets/logo/jl-mark-white.png">', "")
 body = re.search(r"<body class=\"grain\">(.*?)</body>", index, re.S).group(1)

@@ -3,166 +3,235 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Just Living — Option B — Bone</title>
-<meta name="description" content="Just Living. It's a lifestyle. New York streetwear, est. 2020. Tees, essentials, hats and sneakers.">
-<meta property="og:title" content="Just Living — NYC">
-<meta property="og:description" content="It's a lifestyle. New York streetwear, est. 2020.">
-<meta property="og:image" content="assets/og.jpg">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/logo/jl-mark-white.png">
+<title>Just Living — Issue 01</title>
+<meta name="description" content="Just Living, Issue 01. A lookbook from New York. Est. 2020.">
+<link rel="icon" href="assets/logo/jl-mark-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Silkscreen&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/store.css">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
+<style>
+/* Option B — "Issue 01": a printed lookbook. Paper, serif italics, photography first. */
+:root{
+  --bg:#f3efe6; --paper-2:#eae5d9; --ink:#141311; --ink-dim:#6d685e; --line:rgba(20,19,17,.18); --red:#c8102e;
+  --display:'Instrument Serif', Georgia, serif; --body:'Inter Tight', system-ui, sans-serif; --pixel:'Silkscreen', monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:var(--body)}
+.serif{font-family:var(--display);font-weight:400;letter-spacing:-.01em}
+.label{font-family:var(--body);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+.rule{border-top:1px solid var(--line)}
+.wrap{width:min(1400px,100% - 48px);margin-inline:auto}
+@media(max-width:760px){.wrap{width:calc(100% - 32px)}}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border:1px solid var(--ink);border-radius:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;background:transparent;color:var(--ink);cursor:pointer;transition:.2s}
+.btn:hover,.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.solid:hover{background:#000}
+
+/* progress + masthead */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--ink);z-index:60}
+.nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 24px;gap:16px}
+.nav .logo img{height:26px;width:auto}
+.nav ul{display:flex;gap:26px;list-style:none;justify-self:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.nav .right{justify-self:end;display:flex;align-items:center;gap:16px}
+.nav .cart{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.burger{display:none;width:36px;height:36px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:16px}
+.issue{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+@media(max-width:860px){
+  .nav{grid-template-columns:auto 1fr auto}.nav ul{display:none}.issue{display:none}.burger{display:grid;place-items:center}
+  .nav.open{position:fixed;inset:0;height:100svh;display:block;padding:24px}
+  .nav.open ul{display:grid;gap:18px;margin-top:60px;font-family:var(--display);font-size:52px;text-transform:none;letter-spacing:0;font-style:italic}
+  .nav.open .right{position:absolute;top:18px;right:24px}
+  .nav.open .logo{position:absolute;top:18px;left:24px}
+}
+
+/* cover */
+.cover{display:grid;grid-template-columns:1.05fr 1fr;min-height:calc(100svh - 56px);position:relative}
+.cover .text{padding:48px 24px 40px 48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:2}
+.cover h1{font-family:var(--display);font-size:clamp(84px,13vw,220px);line-height:.85;letter-spacing:-.03em}
+.cover h1 em{font-style:italic;display:block;margin-left:.35em}
+.cover .dek{max-width:420px;font-size:18px;color:var(--ink-dim);margin-top:24px}
+.cover .dek strong{color:var(--ink);font-weight:500}
+.cover .meta{display:flex;gap:40px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.cover .photo{position:relative;overflow:hidden;clip-path:inset(0 0 100% 0);animation:reveal 1.4s cubic-bezier(.2,.8,.2,1) .2s forwards}
+.cover .photo img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;transform:scale(1.12);animation:settle 2.2s cubic-bezier(.2,.8,.2,1) .2s forwards}
+@keyframes reveal{to{clip-path:inset(0 0 0 0)}}
+@keyframes settle{to{transform:scale(1)}}
+.cover .cap{position:absolute;left:24px;bottom:20px;color:#fff;font-size:11px;letter-spacing:.16em;text-transform:uppercase;mix-blend-mode:difference;z-index:3}
+.cover .seal{position:absolute;right:-20px;bottom:-30px;width:300px;height:300px;z-index:3;filter:drop-shadow(0 20px 30px rgba(0,0,0,.25))}
+.cover .seal canvas{width:100%;height:100%;display:block}
+.cover .num{position:absolute;right:28px;top:28px;z-index:3;font-family:var(--display);font-size:22px;font-style:italic;color:#fff;mix-blend-mode:difference}
+@media(max-width:860px){
+  .cover{grid-template-columns:1fr;min-height:auto}
+  .cover .text{padding:36px 16px 28px;gap:28px}
+  .cover .photo{aspect-ratio:4/5}
+  .cover .seal{width:170px;height:170px;right:-10px;bottom:-10px}
+}
+
+/* contents */
+.toc{padding:90px 0 60px;position:relative}
+.toc h2{font-family:var(--display);font-size:clamp(40px,6vw,88px);line-height:1;margin-bottom:34px}
+.toc h2 em{font-style:italic}
+.toc .row{display:grid;grid-template-columns:70px 1fr auto auto;gap:24px;align-items:baseline;padding:18px 0;border-top:1px solid var(--line);transition:.2s;cursor:pointer}
+.toc .row:last-child{border-bottom:1px solid var(--line)}
+.toc .row:hover{padding-left:12px}
+.toc .row .n{font-family:var(--display);font-style:italic;font-size:22px;color:var(--ink-dim)}
+.toc .row .name{font-family:var(--display);font-size:clamp(26px,3.4vw,44px);line-height:1}
+.toc .row .name small{display:block;font-family:var(--body);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-top:6px}
+.toc .row .status{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.toc .row .price{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.toc .row .price.gone{text-decoration:line-through;color:var(--ink-dim)}
+.peek{position:fixed;z-index:30;width:220px;aspect-ratio:1;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.92) rotate(-3deg);transition:opacity .25s,transform .25s;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.25)}
+.peek img{width:100%;height:100%;object-fit:cover}
+.peek.on{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg)}
+@media(max-width:760px){.toc .row{grid-template-columns:40px 1fr auto}.toc .row .status{display:none}.peek{display:none}}
+
+/* spreads */
+.spread{display:grid;grid-template-columns:1fr 1fr;min-height:100svh;border-top:1px solid var(--line)}
+.spread:nth-child(even) .media{order:2}
+.spread .media{position:relative;overflow:hidden;background:var(--paper-2)}
+.spread .media img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.spread .media img.alt{position:absolute;inset:0;opacity:0;transition:opacity .5s}
+.spread .media:hover img.alt{opacity:1}
+.spread.in .media img{transform:scale(1)}
+.spread .media .pg{position:absolute;left:20px;bottom:16px;font-family:var(--display);font-style:italic;font-size:20px;color:#fff;mix-blend-mode:difference}
+.spread .copy{padding:min(10vw,120px) min(6vw,72px);display:flex;flex-direction:column;justify-content:center;gap:22px;opacity:0;transform:translateY(24px);transition:opacity .9s,transform .9s}
+.spread.in .copy{opacity:1;transform:none}
+.spread .copy h3{font-family:var(--display);font-size:clamp(44px,5.6vw,92px);line-height:.95;letter-spacing:-.02em}
+.spread .copy h3 em{font-style:italic}
+.spread .copy p{max-width:460px;color:var(--ink-dim);font-size:17px}
+.spread .copy ul{list-style:none;display:grid;gap:8px;font-size:13px;letter-spacing:.04em;max-width:420px;border-top:1px solid var(--line);padding-top:16px}
+.spread .copy ul li::before{content:"— ";color:var(--ink-dim)}
+.spread .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.spread .price{font-family:var(--display);font-size:34px;font-variant-numeric:tabular-nums}
+.spread .price.gone{text-decoration:line-through;color:var(--ink-dim)}
+.spread .sold{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+@media(max-width:860px){.spread{grid-template-columns:1fr;min-height:auto}.spread:nth-child(even) .media{order:0}.spread .media{aspect-ratio:4/5}.spread .copy{padding:36px 16px 56px}}
+
+/* quote */
+.quote{padding:140px 0;text-align:center;border-top:1px solid var(--line);background:var(--paper-2)}
+.quote blockquote{font-family:var(--display);font-size:clamp(34px,5.2vw,78px);line-height:1.05;max-width:1100px;margin:0 auto 36px;letter-spacing:-.02em}
+.quote blockquote em{font-style:italic}
+.quote canvas{width:min(720px,100%);height:min(50vw,320px);margin:0 auto;display:block}
+.quote .who{margin-top:16px}
+
+/* subscribe */
+.sub{padding:120px 0;border-top:1px solid var(--line)}
+.sub .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.sub h2{font-family:var(--display);font-size:clamp(44px,6vw,96px);line-height:.95}
+.sub h2 em{font-style:italic}
+.sub p{color:var(--ink-dim);max-width:440px;margin-bottom:22px}
+.sub form{display:flex;border-bottom:1px solid var(--ink);max-width:520px}
+.sub input{flex:1;border:0;background:transparent;font:inherit;font-size:18px;padding:14px 0;color:var(--ink);outline:none}
+.sub input::placeholder{color:var(--ink-dim)}
+.sub button{border:0;background:transparent;font-size:12px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;color:var(--ink);padding:0 4px}
+.sub .msg{margin-top:12px}
+@media(max-width:860px){.sub .grid{grid-template-columns:1fr}}
+
+/* colophon */
+footer{padding:48px 0 32px;border-top:1px solid var(--line)}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:60px}
+footer ul{list-style:none;display:grid;gap:8px;font-size:14px;color:var(--ink-dim)}
+footer ul li:first-child{color:var(--ink);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+footer .wm{height:40px;width:auto}
+footer .big{font-family:var(--display);font-style:italic;font-size:clamp(56px,13vw,200px);line-height:.9;color:#dcd6c8;letter-spacing:-.03em;user-select:none}
+footer .bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-top:18px}
+footer .bottom a{margin-left:14px}
+@media(max-width:760px){footer .cols{grid-template-columns:1fr 1fr}}
+
+/* countdown strip (store.js fills #countdown) */
+.count{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:12px 24px;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.count .pixel{font-family:var(--body);font-size:11px;letter-spacing:.16em;color:var(--ink-dim)}
+.count b{font-family:var(--display);font-size:22px;letter-spacing:0;text-transform:none;font-style:italic;font-variant-numeric:tabular-nums}
+.count .mini{border-radius:0;font-family:var(--body);font-size:11px}
+.variants{background:rgba(243,239,230,.9);border-radius:0;left:auto;right:16px}
+.variants a{border-radius:0}
+.drawer{background:var(--bg)}
+.drawer input,.drawer select{background:#fff}
+</style>
 </head>
-<body class="grain" data-theme="bone">
+<body>
+<div class="progress" id="progress"></div>
 
 <nav class="nav">
-  <a class="logo" href="index.html" aria-label="Just Living"><img src="assets/logo/jl-mark-white.png" alt="JL"></a>
+  <a class="logo" href="option-b.html" aria-label="Just Living"><img src="assets/logo/wordmark-black.png" alt="Just Living"></a>
   <ul>
-    <li><a href="index.html#drop">Drop</a></li>
-    <li><a href="index.html#shop">Shop</a></li>
-    <li><a href="index.html#lookbook">Lookbook</a></li>
-    <li><a href="index.html#story">Story</a></li>
+    <li><a href="#contents">Contents</a></li>
+    <li><a href="#spreads">Pieces</a></li>
+    <li><a href="#story">Story</a></li>
     <li><a href="info.html">Info</a></li>
   </ul>
   <div class="right">
-    <a class="cart" href="#cart" data-cart-count>CART (0)</a>
+    <span class="issue">Issue 01 · New York · Est. 2020</span>
+    <a class="cart" href="#cart" data-cart-count>Cart (0)</a>
     <button class="burger" aria-label="Menu">☰</button>
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <div class="bg" id="hero-bg"><picture>
-    <source media="(max-width: 760px)" srcset="assets/bg/hero-nyc-mobile.jpg">
-    <img src="assets/bg/hero-nyc.jpg" alt="" fetchpriority="high">
-  </picture></div>
-  <canvas id="hero3d"></canvas>
-  <img class="fallback" src="assets/logo/jl-mark-white.png" alt="">
-  <div class="side"><span class="pixel">IT'S A LIFESTYLE — IT'S A LIFESTYLE — IT'S A LIFESTYLE</span></div>
-  <div class="copy wrap">
-    <div class="tag"><span class="pixel">● NY BASED — EST. 2020</span></div>
-    <h1><span>Just</span><span class="thin">Living</span></h1>
-    <div class="meta">
-      <a class="btn solid" href="#drop">Latest drop</a>
-      <a class="btn" href="#story">The story</a>
-      <div class="mats" aria-label="Logo material">
-        <span class="pixel">Logo:</span>
-        <button data-mat="bone">Bone</button>
-        <button data-mat="chrome">Chrome</button>
-        <button data-mat="gold">Gold</button>
-        <button data-mat="diamond">Diamond</button>
-        <button data-mat="black" class="on">Black</button>
-        <button data-mat="red">Red</button>
-        <button data-act="explode">Break</button>
-      </div>
+<header class="cover">
+  <div class="text">
+    <div class="meta"><span>Issue 01</span><span>Fall / Winter</span><span>New York</span></div>
+    <div>
+      <h1 class="serif">Just<em>Living</em></h1>
+      <p class="dek"><strong>It's a lifestyle.</strong> A lookbook from New York. Seven pieces, all gone, and what comes next.</p>
     </div>
+    <div class="meta"><span>Est. 2020</span><a href="#contents">Open the issue ↓</a></div>
   </div>
-  <div class="scroll-hint"><span class="pixel">Scroll</span><i></i></div>
+  <div class="photo">
+    <img src="assets/products/sneaker-red-rooftop.jpg" alt="Just Living sneaker on a Brooklyn rooftop" fetchpriority="high">
+    <span class="cap">JL Sneaker, red. Rooftop, Brooklyn.</span>
+    <span class="num">p. 01</span>
+  </div>
+  <div class="seal"><canvas id="seal3d"></canvas></div>
 </header>
 
 <div class="count" id="countdown"></div>
-<div class="ticker" aria-hidden="true"><div class="track" id="ticker"></div></div>
 
-<section class="drop" id="drop">
-  <div class="wrap grid">
-    <div class="rv">
-      <div class="tilt"><div class="card" id="drop-card" data-tilt>
-        <img src="assets/products/crown-tee-front.jpg" alt="Just Living — Crown of Thorns tee, front">
-        <img class="back" src="assets/products/crown-tee-back.jpg" alt="Just Living — Crown of Thorns tee, back">
-      </div></div>
-      <div class="flip"><button class="on" data-side="front">Front</button><button data-side="back">Back</button></div>
-    </div>
-    <div class="rv">
-      <span class="pill">Latest drop — sold out</span>
-      <h2 class="display">Crown<br>of Thorns</h2>
-      <p>Heavyweight boxy tee. Oversized front print, cracked-ink texture, and the receipt on the back: total debt, paid. Designed in New York, made to be lived in.</p>
-      <div class="row">
-        <span class="price">$60</span>
-        <a class="btn solid" href="product-crown-of-thorns-tee.html">View</a>
-        <button class="btn" data-notify="crown-of-thorns-tee">Notify me on restock</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="shop">
+<section class="toc" id="contents">
   <div class="wrap">
-    <div class="head rv">
-      <h2 class="display">Shop</h2>
-      <p>Everything that has dropped so far. Every piece is sold out right now. Restocks and new pieces hit Instagram first.</p>
-    </div>
-    <div class="filters rv" id="filters">
-      <button class="on" data-f="all">All</button><button data-f="tees">Tees</button><button data-f="packs">Essentials</button><button data-f="hats">Hats</button><button data-f="footwear">Footwear</button><button data-f="sets">Sets</button>
-    </div>
-    <div class="products" id="products"></div>
+    <h2 class="serif">In this <em>issue</em></h2>
+    <div id="toc"></div>
   </div>
+  <div class="peek" id="peek"><img src="" alt=""></div>
 </section>
 
-<section class="look" id="lookbook">
+<section id="spreads"></section>
+
+<section class="quote" id="story">
   <div class="wrap">
-    <div class="head rv">
-      <h2 class="display">Worn by<br>the city</h2>
-      <p>Tag <a href="https://instagram.com/1justliving1" target="_blank" rel="noopener"><strong>@1justliving1</strong></a> to be featured.</p>
-    </div>
-    <div id="igwall">
-      <div class="masonry rv">
-        <div class="tile"><img src="assets/products/sneaker-red-rooftop.jpg" alt="" loading="lazy"></div>
-        <div class="tile"><img src="assets/products/pirate-tee.jpg" alt="" loading="lazy"></div>
-        <div class="tile ph"><img src="assets/logo/jl-mark-white.png" alt=""><span class="pixel">Tag us · @1justliving1</span></div>
-        <div class="tile"><img src="assets/products/sneaker-red-heel.jpg" alt="" loading="lazy"></div>
-        <div class="tile ph"><img src="assets/logo/jl-mark-white.png" alt=""><span class="pixel">Your photo here</span></div>
-        <div class="tile"><img src="assets/products/blue-set.jpg" alt="" loading="lazy"></div>
-      </div>
-    </div>
+    <blockquote class="serif">"The bones are what's left when everything else is <em>stripped away.</em> The anchor is what keeps you grounded while you do it."</blockquote>
+    <canvas id="wordmark3d"></canvas>
+    <p class="label who">Just Living, New York. Placeholder copy, to be replaced with the founder's words.</p>
   </div>
 </section>
 
-<section class="story" id="story">
+<section class="sub" id="alerts">
   <div class="wrap grid">
-    <div class="rv"><canvas id="wordmark3d"></canvas><div id="story-video"></div></div>
-    <div class="text rv">
-      <span class="pixel">The story</span>
-      <h2 class="display" style="margin:12px 0 22px">Just<br>Living</h2>
-      <p><strong>It's a lifestyle.</strong> Just Living started in New York in 2020: a reminder that you don't need permission to live fully, right now.</p>
-      <p>The mark is an anchor built from bones. The bones are what's left when everything else is stripped away. The anchor is what keeps you grounded while you do it.</p>
-      <p><em>(Placeholder copy — swap in the brand's own words.)</em></p>
-      <div class="stats">
-        <div><b>2020</b><small>Established</small></div>
-        <div><b>NYC</b><small>Designed in</small></div>
-        <div><b>1 of 1</b><small>Mentality</small></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="alerts" id="alerts">
-  <div class="wrap grid">
-    <div class="rv"><h2 class="display">Restock<br>alerts</h2></div>
-    <div class="rv">
-      <p>Everything is gone right now. Get the text before the next drop or restock goes on the feed.</p>
-      <form id="alerts-form">
-        <input id="alerts-email" type="text" inputmode="email" placeholder="Email or phone" required autocomplete="email">
-        <button class="btn" type="submit">Notify me</button>
-      </form>
-      <span class="pixel" id="alerts-msg">No spam. Drops, restocks, that's it.</span>
+    <h2 class="serif">Subscribe to the <em>next issue</em></h2>
+    <div>
+      <p>Everything in this issue sold out. One message when the next drop or a restock goes live. Nothing else.</p>
+      <form id="alerts-form"><input id="alerts-email" type="text" inputmode="email" placeholder="Email or phone" required autocomplete="email"><button type="submit">Subscribe →</button></form>
+      <p class="label msg" id="alerts-msg"></p>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <div class="top">
-      <div><img class="wm" src="assets/logo/wordmark-white.png" alt="Just Living, est. 2020"><p style="color:var(--ink-dim);margin-top:16px;max-width:300px">Just Living LLC. New York. It's a lifestyle.</p></div>
-      <ul><li>Shop</li><li><a href="index.html#shop">Tees</a></li><li><a href="index.html#shop">Essentials</a></li><li><a href="index.html#shop">Hats</a></li><li><a href="index.html#shop">Footwear</a></li></ul>
-      <ul><li>Brand</li><li><a href="index.html#story">Story</a></li><li><a href="index.html#lookbook">Lookbook</a></li><li><a href="index.html#drop">Drops</a></li></ul>
-      <ul><li>Help</li><li><a href="info.html#shipping">Shipping</a></li><li><a href="info.html#returns">Returns</a></li><li><a href="info.html#sizing">Size guide</a></li><li><a href="info.html#contact">Contact &amp; wholesale</a></li><li><a href="https://instagram.com/1justliving1" target="_blank" rel="noopener">Instagram</a></li></ul>
+    <div class="cols">
+      <div><img class="wm" src="assets/logo/wordmark-black.png" alt="Just Living"><p style="color:var(--ink-dim);margin-top:14px;max-width:300px;font-size:14px">Just Living LLC. New York. It's a lifestyle.</p></div>
+      <ul><li>Issue</li><li><a href="#contents">Contents</a></li><li><a href="#spreads">Pieces</a></li><li><a href="#story">Story</a></li></ul>
+      <ul><li>Help</li><li><a href="info.html#shipping">Shipping</a></li><li><a href="info.html#returns">Returns</a></li><li><a href="info.html#sizing">Size guide</a></li><li><a href="info.html#contact">Contact</a></li></ul>
+      <ul><li>Follow</li><li><a href="https://instagram.com/1justliving1" target="_blank" rel="noopener">Instagram</a></li></ul>
     </div>
     <div class="big">Just Living</div>
     <div class="bottom"><span>© 2026 Just Living LLC</span><span><a href="info.html#privacy">Privacy</a><a href="info.html#terms">Terms</a></span></div>
@@ -172,89 +241,68 @@
 <nav class="variants" aria-label="Design version"><span>Version</span><a href="index.html">A</a><a href="option-b.html" class="on">B</a><a href="option-c.html">C</a></nav>
 
 <script type="module">
-import { initStore, renderGrid, bindFilters, tilt, subscribe, supportsWebGL } from './js/store.js';
-import { CONFIG } from './js/config.js';
+import { initStore, loadProducts, productUrl, imgUrl, money, subscribe, supportsWebGL } from './js/store.js';
 
-// 3D hero and story wordmark first (flat logo fallback when WebGL is unavailable)
-if (supportsWebGL()) {
-  const { createLogo3D } = await import('./js/jl3d.js');
-  const hero = createLogo3D(document.getElementById('hero3d'), {
-    svg: 'assets/logo/jl-mark.svg', material: 'black', fit: 0.74, offsetX: 0.22, offsetY: 0.08,
-    narrowBelow: 1000, fitMobile: 0.5, offsetXMobile: 0.1, offsetYMobile: 0.2,
-    scrollRotate: 1.4, parallax: 0.6,
-  });
-  document.querySelectorAll('.mats button').forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.act === 'explode') {
-      const exploded = hero.assembled < 0.5;
-      exploded ? hero.assemble() : hero.explode();
-      b.textContent = exploded ? 'Break' : 'Rebuild';
-      return;
-    }
-    hero.setMaterial(b.dataset.mat);
-    document.querySelectorAll('.mats [data-mat]').forEach(x => x.classList.toggle('on', x === b));
-  }));
-  // story: the script wordmark in white chrome, slowly turning, following the cursor
-  createLogo3D(document.getElementById('wordmark3d'), {
-    svg: 'assets/logo/wordmark.svg', material: 'whitechrome', depth: 90, bevel: 18, fit: 0.86,
-    curveSegments: 6, assemble: false, parallax: 0.35, spin: true, exposure: 1.25, sweep: true,
-  });
-} else {
-  document.body.classList.add('no-webgl');
-  document.getElementById('wordmark3d').replaceWith(Object.assign(new Image(), { src: 'assets/logo/wordmark-white.png', alt: 'Just Living' }));
-}
-
-// store: products, cart, alerts, countdown, menu
 const products = await initStore();
-renderGrid(document.getElementById('products'), products);
-bindFilters(document.getElementById('filters'), document.getElementById('products'));
-tilt(document.getElementById('drop'));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-// optional campaign video in the story section
-if (CONFIG.STORY_VIDEO) {
-  document.getElementById('story-video').innerHTML = `<video src="${CONFIG.STORY_VIDEO}" autoplay muted loop playsinline></video>`;
-}
+// table of contents with a hover preview that follows the cursor
+const toc = document.getElementById('toc'), peek = document.getElementById('peek'), peekImg = peek.querySelector('img');
+toc.innerHTML = products.map((p, i) => `
+  <a class="row" href="${productUrl(p)}" data-img="${imgUrl(p.images[0])}">
+    <span class="n">${String(i + 1).padStart(2, '0')}</span>
+    <span class="name">${esc(p.name)}<small>${esc(p.color)}</small></span>
+    <span class="status">${p.soldOut ? 'Sold out' : 'Available'}</span>
+    <span class="price${p.soldOut ? ' gone' : ''}">${money(p.price)}</span>
+  </a>`).join('');
+toc.addEventListener('pointerover', e => { const r = e.target.closest('.row'); if (r) { peekImg.src = r.dataset.img; peek.classList.add('on'); } });
+toc.addEventListener('pointerleave', () => peek.classList.remove('on'));
+window.addEventListener('pointermove', e => { peek.style.left = e.clientX + 'px'; peek.style.top = e.clientY + 'px'; }, { passive: true });
 
-// featured drop: front / back
-document.querySelectorAll('.flip button').forEach(b => b.addEventListener('click', () => {
-  document.getElementById('drop-card').classList.toggle('flipped', b.dataset.side === 'back');
-  document.querySelectorAll('.flip button').forEach(x => x.classList.toggle('on', x === b));
-}));
+// one spread per piece
+const spreads = document.getElementById('spreads');
+spreads.innerHTML = products.map((p, i) => {
+  const [first, ...rest] = p.name.split(' ');
+  return `
+  <article class="spread" id="${p.id}">
+    <div class="media">
+      <img src="${imgUrl(p.images[0])}" alt="${esc(p.name)}" loading="lazy">
+      ${p.images[1] ? `<img class="alt" src="${imgUrl(p.images[1])}" alt="" loading="lazy">` : ''}
+      <span class="pg">p. ${String(i + 2).padStart(2, '0')}</span>
+    </div>
+    <div class="copy">
+      <span class="label">${String(i + 1).padStart(2, '0')} / ${esc(p.color)}</span>
+      <h3 class="serif">${esc(first)} <em>${esc(rest.join(' '))}</em></h3>
+      <p>${esc(p.description)}</p>
+      <ul>${p.details.map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+      <div class="row">
+        <span class="price${p.soldOut ? ' gone' : ''}">${money(p.price)}</span>
+        ${p.soldOut ? `<span class="sold">Sold out</span><button class="btn" data-notify="${p.id}">Notify me</button>` : `<button class="btn solid" data-add="${p.id}">Add to cart</button>`}
+        <a class="btn" href="${productUrl(p)}">Details</a>
+      </div>
+    </div>
+  </article>`; }).join('');
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.25 });
+document.querySelectorAll('.spread').forEach(el => io.observe(el));
 
-// ticker: a JS marquee instead of a CSS animation. iOS refuses to paint very wide animated
-// layers, so this keeps the strip to a few words wider than the screen and recycles them.
-const t = document.getElementById('ticker');
-const words = ['Just Living', 'New York', 'Est. 2020', "It's a lifestyle", 'Tag us to be featured', '1 of 1'];
-t.innerHTML = [...words, ...words].map(w => `<span>${w}</span>`).join('');
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  let off = 0, last = performance.now();
-  const step = now => {
-    off += (now - last) * 0.06; last = now;               // 60px per second
-    let first = t.firstElementChild;
-    while (first && first.offsetWidth && off >= first.offsetWidth) { off -= first.offsetWidth; t.appendChild(first); first = t.firstElementChild; }
-    t.style.transform = `translate3d(${-off}px,0,0)`;
-    requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
+// reading progress
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => { bar.style.width = (scrollY / (document.body.scrollHeight - innerHeight) * 100) + '%'; }, { passive: true });
 
-// general drop-alert form
+// subscribe
 document.getElementById('alerts-form').addEventListener('submit', async e => {
   e.preventDefault();
   const msg = document.getElementById('alerts-msg'), input = document.getElementById('alerts-email');
-  try {
-    const res = await subscribe(input.value.trim(), { restock_product: 'next-drop' });
-    msg.textContent = res.saved === 'klaviyo' ? "You're on the list." : 'Saved. (Connect Klaviyo in js/config.js to send real texts and emails.)';
-    input.value = '';
-  } catch (err) { msg.textContent = err.message; }
+  try { const r = await subscribe(input.value.trim(), { restock_product: 'next-drop' }); msg.textContent = r.saved === 'klaviyo' ? "You're on the list." : 'Saved. (Connect Klaviyo in js/config.js to send real messages.)'; input.value = ''; }
+  catch (err) { msg.textContent = err.message; }
 });
 
-// skyline parallax
-const bg = document.getElementById('hero-bg');
-addEventListener('scroll', () => { const y = Math.min(scrollY, innerHeight); bg.style.transform = `translateY(${y * 0.25}px)`; }, { passive: true });
-
-// reveal on scroll
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
+// 3D: the black mark as a cover sticker, the wordmark in white chrome under the quote
+if (supportsWebGL()) {
+  const { createLogo3D } = await import('./js/jl3d.js');
+  createLogo3D(document.getElementById('seal3d'), { svg: 'assets/logo/jl-mark.svg', material: 'black', fit: 0.9, depth: 260, bevel: 40, assemble: true, parallax: 0.9, exposure: 1.2 });
+  createLogo3D(document.getElementById('wordmark3d'), { svg: 'assets/logo/wordmark.svg', material: 'black', depth: 90, bevel: 18, fit: 0.9, curveSegments: 6, assemble: false, parallax: 0.3, spin: true, sweep: true, exposure: 1.3 });
+}
 </script>
 </body>
 </html>
