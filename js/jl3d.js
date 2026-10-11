@@ -81,10 +81,13 @@ const MATERIALS = {
     color: 0xe6dfcf, roughness: 0.6, metalness: 0.0,
     clearcoat: 0.25, clearcoatRoughness: 0.5, sheen: 0.4, sheenColor: 0xfff6e6,
   }),
-  chrome: () => new THREE.MeshPhysicalMaterial({
-    // white chrome: pearl-white liquid metal, bright reflections with a soft iridescent edge
-    color: 0xf6f6f8, metalness: 0.85, roughness: 0.1, envMapIntensity: 2.0,
-    clearcoat: 1, clearcoatRoughness: 0.04, iridescence: 0.4, iridescenceIOR: 1.3,
+  chrome: () => new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.14, metalness: 1.0, envMapIntensity: 1.6,
+  }),
+  whitechrome: () => new THREE.MeshPhysicalMaterial({
+    // pearl-white liquid metal: bright reflections with a soft iridescent edge
+    color: 0xffffff, metalness: 0.9, roughness: 0.07, envMapIntensity: 2.8,
+    clearcoat: 1, clearcoatRoughness: 0.03, iridescence: 0.45, iridescenceIOR: 1.3,
     sheen: 0.6, sheenRoughness: 0.3, sheenColor: 0xffffff, specularIntensity: 1,
   }),
   black: () => new THREE.MeshPhysicalMaterial({
@@ -127,6 +130,7 @@ export function createLogo3D(canvas, opts = {}) {
     neonColor: 0xfff1d6, // warm white tube
     neonAccent: null,    // optional second colour for the small lettering (EST. 2020)
     lightUp: false,      // start dark and light the letters up in sequence on api.lightUp()
+    sweep: false,        // slowly orbit the key lights so highlights travel across the surface
   }, opts);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: o.alpha, powerPreference: 'high-performance' });
@@ -350,6 +354,12 @@ export function createLogo3D(canvas, opts = {}) {
         // the glass goes from dark to faintly warm as it lights
         m.color.setScalar(0.04 + p.lit * 0.12);
       }
+    }
+
+    if (o.sweep) {
+      sp1.position.set(Math.sin(t * 0.5) * 5, 2.5 + Math.cos(t * 0.35) * 1.5, 4);
+      sp2.position.set(Math.cos(t * 0.4) * -4, 1.5, 3.5);
+      key.position.set(Math.sin(t * 0.3) * 4, 4, 5);
     }
 
     // drag inertia

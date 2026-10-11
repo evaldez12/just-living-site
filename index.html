@@ -55,7 +55,7 @@
       <div class="mats" aria-label="Logo material">
         <span class="pixel">Logo:</span>
         <button data-mat="bone" class="on">Bone</button>
-        <button data-mat="chrome">White chrome</button>
+        <button data-mat="chrome">Chrome</button>
         <button data-mat="gold">Gold</button>
         <button data-mat="diamond">Diamond</button>
         <button data-mat="black">Black</button>
@@ -190,14 +190,11 @@ if (supportsWebGL()) {
     hero.setMaterial(b.dataset.mat);
     document.querySelectorAll('.mats [data-mat]').forEach(x => x.classList.toggle('on', x === b));
   }));
-  // story: the script wordmark as a neon sign. Lights up letter by letter when scrolled into view.
-  const sign = createLogo3D(document.getElementById('wordmark3d'), {
-    svg: 'assets/logo/wordmark.svg', material: 'neon', bloom: true, lightUp: true,
-    neonColor: 0xfff1d6, neonAccent: 0xff2a3c, depth: 70, bevel: 34, fit: 0.8,
-    curveSegments: 6, assemble: false, parallax: 0.3, spin: true, exposure: 0.9,
+  // story: the script wordmark in white chrome, slowly turning, following the cursor
+  createLogo3D(document.getElementById('wordmark3d'), {
+    svg: 'assets/logo/wordmark.svg', material: 'whitechrome', depth: 90, bevel: 18, fit: 0.86,
+    curveSegments: 6, assemble: false, parallax: 0.35, spin: true, exposure: 1.25, sweep: true,
   });
-  new IntersectionObserver((es, ob) => { if (es[0].isIntersecting) { sign.lightUp(); ob.disconnect(); } }, { threshold: 0.4 })
-    .observe(document.getElementById('wordmark3d'));
 } else {
   document.body.classList.add('no-webgl');
   document.getElementById('wordmark3d').replaceWith(Object.assign(new Image(), { src: 'assets/logo/wordmark-white.png', alt: 'Just Living' }));

@@ -146,7 +146,7 @@ section{padding:110px 0}
 /* story */
 .story{position:relative;overflow:hidden;border-top:1px solid var(--line)}
 .story .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.story canvas{width:100%;height:min(60vw,520px);display:block;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 50% 50%,#000 30%,transparent 82%);mask-image:radial-gradient(ellipse 75% 70% at 50% 50%,#000 30%,transparent 82%)}
+.story canvas{width:100%;height:min(60vw,520px);display:block}
 .story video{width:100%;border-radius:16px;margin-top:18px}
 .story .text p{color:var(--ink-dim);font-size:18px;margin-bottom:18px;max-width:520px}
 .story .text p strong{color:var(--ink)}
