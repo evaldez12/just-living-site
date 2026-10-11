@@ -82,10 +82,9 @@ h2.display{font-size:clamp(40px,7vw,96px)}
 
 /* ticker */
 .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--ink);color:#000}
-.ticker .track{display:flex;width:max-content;animation:tick 28s linear infinite}
+.ticker .track{display:flex;width:max-content;will-change:transform}
 .ticker span{font-family:var(--display);font-size:22px;letter-spacing:.06em;padding:12px 0;text-transform:uppercase;white-space:nowrap}
 .ticker span::after{content:"";display:inline-block;width:14px;height:14px;margin:0 28px -1px;background:url(../assets/logo/jl-mark-black.png) center/contain no-repeat}
-@keyframes tick{to{transform:translateX(-50%)}}
 
 /* sections */
 section{padding:110px 0}
@@ -246,4 +245,4 @@ table.chart th{font-family:var(--pixel);font-size:10px;letter-spacing:.14em;text
 /* reveal */
 .rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
 .rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.ticker .track{animation:none}.drawer{transition:none}}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.drawer{transition:none}}

@@ -84,7 +84,7 @@ export function createLogo3D(canvas, opts = {}) {
     curveSegments: 10,
     assemble: true,    // fly the pieces in on load
     spin: true,        // slow idle rotation
-    parallax: 0.55,    // mouse influence (radians)
+    parallax: 0.8,     // cursor / gyroscope influence (radians)
     scrollRotate: 0,   // extra Y rotation per 1000px scrolled
     alpha: true,
     exposure: 1.15,
@@ -172,7 +172,7 @@ export function createLogo3D(canvas, opts = {}) {
         pos: new THREE.Vector3(home.x + r(size.x * 1.6), home.y + r(size.y * 1.6), r(size.x * 1.2) + size.x * 0.6),
         rot: new THREE.Euler(r(Math.PI * 1.5), r(Math.PI * 1.5), r(Math.PI)),
       };
-      pieces.push({ mesh, home, start, delay: i * 0.09 });
+      pieces.push({ mesh, home, start, delay: i * 0.09, lift: 0, pop: 0, spin: 0, kick: 0 });
       logo.add(mesh);
     });
     ready = true;
@@ -188,14 +188,67 @@ export function createLogo3D(canvas, opts = {}) {
   function assemble() { assembleDir = 1; }
   function explode() { assembleDir = -1; }
 
-  const onMove = e => {
+  // ---------- interaction: cursor parallax, drag to spin, gyroscope, hover / tap on bones ----------
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const drag = { on: false, x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0, moved: false };
+  const gyro = { on: false, x: 0, y: 0 };
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  let hovered = null;
+  canvas.style.touchAction = 'pan-y'; // vertical scroll still works on phones, sideways drags spin the logo
+
+  const toLocal = e => {
     const r = canvas.getBoundingClientRect();
-    const cx = (e.touches ? e.touches[0].clientX : e.clientX);
-    const cy = (e.touches ? e.touches[0].clientY : e.clientY);
-    mouse.tx = ((cx - r.left) / r.width - 0.5) * 2;
-    mouse.ty = ((cy - r.top) / r.height - 0.5) * 2;
+    return { x: ((e.clientX - r.left) / r.width - 0.5) * 2, y: ((e.clientY - r.top) / r.height - 0.5) * 2, inside: e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom };
   };
+  const pick = (x, y) => {
+    if (!ready) return null;
+    ndc.set(x, -y); ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(pieces.map(p => p.mesh), false)[0];
+    return hit ? pieces.find(p => p.mesh === hit.object) : null;
+  };
+  const onMove = e => {
+    const l = toLocal(e);
+    if (drag.on) {
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      drag.vy = dx * 0.006; drag.vx = dy * 0.004;
+      drag.ry += drag.vy; drag.rx += drag.vx;
+      drag.x = e.clientX; drag.y = e.clientY;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      return;
+    }
+    if (!coarse) {
+      mouse.tx = l.x; mouse.ty = l.y;
+      const h = l.inside ? pick(l.x, l.y) : null;
+      if (h !== hovered) { hovered = h; canvas.style.cursor = h ? 'grab' : ''; }
+    }
+  };
+  const onDown = e => {
+    const l = toLocal(e); if (!l.inside) return;
+    const h = pick(l.x, l.y);
+    if (h) { h.kick += Math.PI * 2; h.pop = 1; }       // tap or click a bone: it spins once and pops forward
+    drag.on = true; drag.moved = false; drag.x = e.clientX; drag.y = e.clientY; drag.vx = drag.vy = 0;
+    canvas.style.cursor = 'grabbing';
+    if (coarse && !gyro.on) askGyro();
+  };
+  const onUp = () => { if (!drag.on) return; drag.on = false; canvas.style.cursor = hovered ? 'grab' : ''; };
+
+  // iPhone needs an explicit permission for the gyroscope, and only inside a tap
+  function askGyro() {
+    const start = () => { gyro.on = true; window.addEventListener('deviceorientation', e => {
+      if (e.gamma == null) return;
+      gyro.x = THREE.MathUtils.clamp(e.gamma / 35, -1, 1);           // left / right tilt
+      gyro.y = THREE.MathUtils.clamp((e.beta - 45) / 35, -1, 1);     // front / back, 45° = holding it normally
+    }, { passive: true }); };
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') start(); }).catch(() => {});
+    } else if ('DeviceOrientationEvent' in window) start();
+  }
+  if (coarse) window.addEventListener('touchend', () => { if (!gyro.on) askGyro(); }, { once: true, passive: true });
+
   window.addEventListener('pointermove', onMove, { passive: true });
+  canvas.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
   window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
   window.addEventListener('resize', resize);
   resize();
@@ -208,18 +261,31 @@ export function createLogo3D(canvas, opts = {}) {
     if (!ready) { renderer.render(scene, camera); return; }
 
     assembleT = THREE.MathUtils.clamp(assembleT + assembleDir * dt / 1.9, 0, 1);
-    for (const p of pieces) {
+    pieces.forEach((p, i) => {
       const local = THREE.MathUtils.clamp((assembleT * 1.9 - p.delay) / (1.9 - pieces.length * 0.09), 0, 1);
       const k = ease.outExpo(local);
+      // hover lift / tap pop / click spin, all spring back on their own
+      p.lift += ((p === hovered ? 1 : 0) - p.lift) * 0.12;
+      p.pop *= 0.9;
+      p.spin += (p.kick - p.spin) * 0.08;
+      const lift = (p.lift * 0.08 + p.pop * 0.14) * baseSize.x;
       p.mesh.position.lerpVectors(p.start.pos, p.home, k);
-      p.mesh.rotation.set(p.start.rot.x * (1 - k), p.start.rot.y * (1 - k), p.start.rot.z * (1 - k));
-    }
+      p.mesh.position.z += lift;
+      p.mesh.position.y += Math.sin(t * 1.3 + i * 1.7) * baseSize.y * 0.004; // each bone breathes a little
+      p.mesh.rotation.set(p.start.rot.x * (1 - k) + p.lift * 0.12, p.start.rot.y * (1 - k) + p.spin, p.start.rot.z * (1 - k) - p.lift * 0.08);
+    });
 
-    mouse.x += (mouse.tx - mouse.x) * 0.06;
-    mouse.y += (mouse.ty - mouse.y) * 0.06;
-    const idleY = o.spin ? Math.sin(t * 0.45) * 0.35 : 0;
-    root.rotation.y = idleY + mouse.x * o.parallax + (scrollY / 1000) * o.scrollRotate;
-    root.rotation.x = Math.sin(t * 0.6) * 0.06 + mouse.y * o.parallax * 0.55;
+    // drag inertia
+    if (!drag.on) { drag.vx *= 0.94; drag.vy *= 0.94; drag.rx += drag.vx; drag.ry += drag.vy; }
+    drag.rx = THREE.MathUtils.clamp(drag.rx, -0.9, 0.9);
+
+    const tx = coarse ? gyro.x : mouse.tx, ty = coarse ? gyro.y : mouse.ty;
+    mouse.x += (tx - mouse.x) * 0.1;
+    mouse.y += (ty - mouse.y) * 0.1;
+    const idleAmp = coarse ? 0.55 : 0.35;
+    const idleY = o.spin ? Math.sin(t * 0.45) * idleAmp : 0;
+    root.rotation.y = idleY + mouse.x * o.parallax + (scrollY / 1000) * o.scrollRotate + drag.ry;
+    root.rotation.x = Math.sin(t * 0.6) * 0.06 + mouse.y * o.parallax * 0.55 + drag.rx;
     logo.position.y = Math.sin(t * 0.9) * 0.05;
     renderer.render(scene, camera);
   }

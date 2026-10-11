@@ -216,10 +216,22 @@ document.querySelectorAll('.flip button').forEach(b => b.addEventListener('click
   document.querySelectorAll('.flip button').forEach(x => x.classList.toggle('on', x === b));
 }));
 
-// ticker
+// ticker: a JS marquee instead of a CSS animation. iOS refuses to paint very wide animated
+// layers, so this keeps the strip to a few words wider than the screen and recycles them.
 const t = document.getElementById('ticker');
 const words = ['Just Living', 'New York', 'Est. 2020', "It's a lifestyle", 'Tag us to be featured', '1 of 1'];
-t.innerHTML = [...words, ...words, ...words, ...words].map(w => `<span>${w}</span>`).join('');
+t.innerHTML = [...words, ...words].map(w => `<span>${w}</span>`).join('');
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  let off = 0, last = performance.now();
+  const step = now => {
+    off += (now - last) * 0.06; last = now;               // 60px per second
+    let first = t.firstElementChild;
+    while (first && first.offsetWidth && off >= first.offsetWidth) { off -= first.offsetWidth; t.appendChild(first); first = t.firstElementChild; }
+    t.style.transform = `translate3d(${-off}px,0,0)`;
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 
 // general drop-alert form
 document.getElementById('alerts-form').addEventListener('submit', async e => {
