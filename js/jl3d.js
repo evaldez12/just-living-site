@@ -280,7 +280,7 @@ export function createLogo3D(canvas, opts = {}) {
       // I
       copy(thin, 100, -200, 1, 1.25);    copy(tri, 100, 820, 0.55, 0.55);
       // N
-      copy(vert, 1000, 0, 1, 0.95);      copy(vert, 1900, 0, 1, 0.95);     copy(vert, 1450, 0, 1, 1.06, -0.44);
+      copy(vert, 1000, 0, 1, 0.95);      copy(vert, 1900, 0, 1, 0.95);     copy(vert, 1450, 0, 1, 1.06, 0.44);
       // G: square G, the top bone is the inner bar
       copy(vert, 2800, 0, 1, 0.95);      copy(horiz, 3250, 800, 0.75, 0.75); copy(horiz, 3250, -800, 0.75, 0.75);
       copy(thin, 3650, -450, 1, 0.8);    W(top, 3350, -50, 1.1, 0.55);
