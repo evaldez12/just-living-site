@@ -141,7 +141,8 @@ export function createLogo3D(canvas, opts = {}) {
     neonAccent: null,    // optional second colour for the small lettering (EST. 2020)
     lightUp: false,      // start dark and light the letters up in sequence on api.lightUp()
     sweep: false,        // slowly orbit the key lights so highlights travel across the surface
-    word: false,         // when true, explode() rearranges the bones to spell LIVE instead of scattering
+    word: false,         // when true, explode() rearranges the bones to spell LIVING instead of scattering
+    wordShrink: 0.56,    // how much smaller the group gets while spelled out (the word is much wider than the anchor)
   }, opts);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: o.alpha, powerPreference: 'high-performance' });
@@ -201,7 +202,7 @@ export function createLogo3D(canvas, opts = {}) {
     const fit = mobile && o.fitMobile != null ? o.fitMobile : o.fit;
     const sc = Math.min((visH * fit) / baseSize.y, (visW * fit) / baseSize.x);
     baseScale = sc; logo.scale.setScalar(sc);
-    basePos.x = visW * (mobile ? o.offsetXMobile : o.offsetX); basePos.cx = visW * (mobile ? 0 : 0.06);
+    basePos.x = visW * (mobile ? o.offsetXMobile : o.offsetX); basePos.cx = 0;
     root.position.x = basePos.x;
     root.position.y = visH * (mobile && o.offsetYMobile != null ? o.offsetYMobile : o.offsetY);
   }
@@ -258,27 +259,31 @@ export function createLogo3D(canvas, opts = {}) {
 
     if (o.word && pieces.length === 6) {
       // bones by their place in the anchor (same order as the SVG): 0 V-bottom, 1 long vertical,
-      // 2 right horizontal, 3 left triangle, 4 thin side bone, 5 top bone
+      // 2 right horizontal, 3 left triangle, 4 thin side bone, 5 top bone.
+      // Spelled out: L I V I N G, letter height ~1900 units, centred on x = 0.
       const [vee, vert, horiz, tri, thin, top] = pieces;
-      const W = (p, x, y, sx = 1, sy = 1, rot = 0) => { p.word = { pos: new THREE.Vector3(x, y, 0), scale: new THREE.Vector2(sx, sy), rot }; };
-      // L
-      W(vert, -1950, 0);            W(horiz, -1500, -850);
-      // I with the triangle as its dot
-      W(thin, -900, -200, 1, 1.25); W(tri, -900, 820, 0.55, 0.55);
-      // V: the bottom bone already is one
-      W(vee, 150, 0, 0.9, 2.5);
-      // E: the top bone is the middle bar, the rest are copies that grow out of the real bones
-      W(top, 1650, 0, 1.25, 0.6);
-      const copy = (src, x, y, sx, sy) => {
+      const OX = -225;
+      const W = (p, x, y, sx = 1, sy = 1, rot = 0) => { p.word = { pos: new THREE.Vector3(x + OX, y, 0), scale: new THREE.Vector2(sx, sy), rot }; };
+      const copy = (src, x, y, sx = 1, sy = 1, rot = 0) => {
         const m = new THREE.Mesh(src.mesh.geometry, src.mesh.material);
         m.position.copy(src.home); m.scale.set(0, 0, 1);
         logo.add(m);
         const c = { mesh: m, home: src.home.clone(), start: src.start, delay: 0, lift: 0, pop: 0, spin: 0, kick: 0, lit: 1, litTarget: 1, flick: 0, order: 0, copy: true };
-        W(c, x, y, sx, sy); pieces.push(c);
+        W(c, x, y, sx, sy, rot); pieces.push(c);
       };
-      copy(vert, 1250, 0, 1, 0.95);     // E spine
-      copy(horiz, 1650, 800, 0.75, 0.75); // E top
-      copy(horiz, 1650, -800, 0.75, 0.75); // E bottom
+      // L
+      W(vert, -3000, 0);                 W(horiz, -2555, -850);
+      // I (triangle is the dot)
+      W(thin, -1950, -200, 1, 1.25);     W(tri, -1950, 820, 0.55, 0.55);
+      // V: the bottom bone already is one
+      W(vee, -1000, 0, 0.9, 2.5);
+      // I
+      copy(thin, 100, -200, 1, 1.25);    copy(tri, 100, 820, 0.55, 0.55);
+      // N
+      copy(vert, 1000, 0, 1, 0.95);      copy(vert, 1900, 0, 1, 0.95);     copy(vert, 1450, 0, 1, 1.06, -0.44);
+      // G: square G, the top bone is the inner bar
+      copy(vert, 2800, 0, 1, 0.95);      copy(horiz, 3250, 800, 0.75, 0.75); copy(horiz, 3250, -800, 0.75, 0.75);
+      copy(thin, 3650, -450, 1, 0.8);    W(top, 3350, -50, 1.1, 0.55);
     }
     ready = true;
     resize();
@@ -370,7 +375,7 @@ export function createLogo3D(canvas, opts = {}) {
     wordT = THREE.MathUtils.clamp(wordT + wordDir * dt / 1.4, 0, 1);
     // the word is wider than the anchor: shrink and centre the group while it is spelled out
     const wordK = ease.inOutCubic(wordT);
-    logo.scale.setScalar(baseScale * (1 - wordK * 0.42));
+    logo.scale.setScalar(baseScale * (1 - wordK * o.wordShrink));
     root.position.x = basePos.x * (1 - wordK) + basePos.cx * wordK;
     pieces.forEach((p, i) => {
       const local = THREE.MathUtils.clamp((assembleT * 1.9 - p.delay) / (1.9 - pieces.length * 0.09), 0, 1);
