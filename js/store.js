@@ -251,6 +251,11 @@ export async function initStore() {
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeNotify(); } });
   mobileMenu(); analytics(); instagramWall();
+  // keep the address bar clean: section links (#story, #shop) scroll the page but never stick to the URL,
+  // so a copied link always opens at the top
+  const clean = () => { if (location.hash && location.hash !== '#cart') history.replaceState(null, '', location.pathname + location.search); };
+  addEventListener('hashchange', () => setTimeout(clean, 900));
+  if (location.hash) setTimeout(clean, 1500);
   countdown($('#countdown'));
   return PRODUCTS;
 }
