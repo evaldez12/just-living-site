@@ -237,6 +237,8 @@ function mobileMenu() {
 
 /* ---------------- boot ---------------- */
 export async function initStore() {
+  try { history.scrollRestoration = 'manual'; } catch {}
+  if (!location.hash) { scrollTo(0, 0); addEventListener('pageshow', e => { if (e.persisted && !location.hash) scrollTo(0, 0); }); }
   await loadProducts();
   document.body.insertAdjacentHTML('beforeend', cartMarkup());
   updateCartCount();

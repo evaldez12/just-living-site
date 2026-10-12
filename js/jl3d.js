@@ -141,6 +141,7 @@ export function createLogo3D(canvas, opts = {}) {
     neonAccent: null,    // optional second colour for the small lettering (EST. 2020)
     lightUp: false,      // start dark and light the letters up in sequence on api.lightUp()
     sweep: false,        // slowly orbit the key lights so highlights travel across the surface
+    word: false,         // when true, explode() rearranges the bones to spell LIVE instead of scattering
   }, opts);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: o.alpha, powerPreference: 'high-performance' });
@@ -185,6 +186,7 @@ export function createLogo3D(canvas, opts = {}) {
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   let scrollY = 0;
   let litT = -1e9; // time since lightUp() was called
+  let wordT = 0, wordDir = 0;   // 0 = anchor, 1 = spelled out
 
   function resize() {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
@@ -198,11 +200,13 @@ export function createLogo3D(canvas, opts = {}) {
     const mobile = w < o.narrowBelow;
     const fit = mobile && o.fitMobile != null ? o.fitMobile : o.fit;
     const sc = Math.min((visH * fit) / baseSize.y, (visW * fit) / baseSize.x);
-    logo.scale.setScalar(sc);
-    root.position.x = visW * (mobile ? o.offsetXMobile : o.offsetX);
+    baseScale = sc; logo.scale.setScalar(sc);
+    basePos.x = visW * (mobile ? o.offsetXMobile : o.offsetX); basePos.cx = visW * (mobile ? 0 : 0.06);
+    root.position.x = basePos.x;
     root.position.y = visH * (mobile && o.offsetYMobile != null ? o.offsetYMobile : o.offsetY);
   }
   const baseSize = new THREE.Vector3(1, 1, 1);
+  let baseScale = 1; const basePos = { x: 0, cx: 0 };
 
   new SVGLoader().load(o.svg, data => {
     const bounds = new THREE.Box3();
@@ -251,6 +255,31 @@ export function createLogo3D(canvas, opts = {}) {
     });
     // light-up order: left to right across the sign
     [...pieces].sort((a, b) => a.home.x - b.home.x).forEach((p, i) => { p.order = i; });
+
+    if (o.word && pieces.length === 6) {
+      // bones by their place in the anchor (same order as the SVG): 0 V-bottom, 1 long vertical,
+      // 2 right horizontal, 3 left triangle, 4 thin side bone, 5 top bone
+      const [vee, vert, horiz, tri, thin, top] = pieces;
+      const W = (p, x, y, sx = 1, sy = 1, rot = 0) => { p.word = { pos: new THREE.Vector3(x, y, 0), scale: new THREE.Vector2(sx, sy), rot }; };
+      // L
+      W(vert, -1950, 0);            W(horiz, -1500, -850);
+      // I with the triangle as its dot
+      W(thin, -900, -200, 1, 1.25); W(tri, -900, 820, 0.55, 0.55);
+      // V: the bottom bone already is one
+      W(vee, 150, 0, 0.9, 2.5);
+      // E: the top bone is the middle bar, the rest are copies that grow out of the real bones
+      W(top, 1650, 0, 1.25, 0.6);
+      const copy = (src, x, y, sx, sy) => {
+        const m = new THREE.Mesh(src.mesh.geometry, src.mesh.material);
+        m.position.copy(src.home); m.scale.set(0, 0, 1);
+        logo.add(m);
+        const c = { mesh: m, home: src.home.clone(), start: src.start, delay: 0, lift: 0, pop: 0, spin: 0, kick: 0, lit: 1, litTarget: 1, flick: 0, order: 0, copy: true };
+        W(c, x, y, sx, sy); pieces.push(c);
+      };
+      copy(vert, 1250, 0, 1, 0.95);     // E spine
+      copy(horiz, 1650, 800, 0.75, 0.75); // E top
+      copy(horiz, 1650, -800, 0.75, 0.75); // E bottom
+    }
     ready = true;
     resize();
     o.onReady && o.onReady(api);
@@ -262,8 +291,8 @@ export function createLogo3D(canvas, opts = {}) {
     pieces.forEach(p => { p.mesh.material = material; });
   }
   function lightUp() { litT = 0; pieces.forEach(p => { p.litTarget = 1; }); }
-  function assemble() { assembleDir = 1; }
-  function explode() { assembleDir = -1; }
+  function assemble() { if (o.word) wordDir = -1; else assembleDir = 1; }
+  function explode() { if (o.word) wordDir = 1; else assembleDir = -1; }
 
   // ---------- interaction: cursor parallax, drag to spin, gyroscope, hover / tap on bones ----------
   const coarse = matchMedia('(pointer: coarse)').matches;
@@ -338,6 +367,11 @@ export function createLogo3D(canvas, opts = {}) {
     if (!ready) { renderer.render(scene, camera); return; }
 
     assembleT = THREE.MathUtils.clamp(assembleT + assembleDir * dt / 1.9, 0, 1);
+    wordT = THREE.MathUtils.clamp(wordT + wordDir * dt / 1.4, 0, 1);
+    // the word is wider than the anchor: shrink and centre the group while it is spelled out
+    const wordK = ease.inOutCubic(wordT);
+    logo.scale.setScalar(baseScale * (1 - wordK * 0.42));
+    root.position.x = basePos.x * (1 - wordK) + basePos.cx * wordK;
     pieces.forEach((p, i) => {
       const local = THREE.MathUtils.clamp((assembleT * 1.9 - p.delay) / (1.9 - pieces.length * 0.09), 0, 1);
       const k = ease.outExpo(local);
@@ -347,9 +381,18 @@ export function createLogo3D(canvas, opts = {}) {
       p.spin += (p.kick - p.spin) * 0.08;
       const lift = (p.lift * 0.08 + p.pop * 0.14) * baseSize.x;
       p.mesh.position.lerpVectors(p.start.pos, p.home, k);
+      let rx = p.start.rot.x * (1 - k), ry = p.start.rot.y * (1 - k), rz = p.start.rot.z * (1 - k);
+      let sx = p.copy ? 0 : 1, sy = p.copy ? 0 : 1;
+      if (p.word && wordT > 0) {
+        const w = ease.inOutCubic(wordT);
+        p.mesh.position.lerp(p.word.pos, w);
+        rx *= 1 - w; ry *= 1 - w; rz = rz * (1 - w) + p.word.rot * w;
+        sx += (p.word.scale.x - sx) * w; sy += (p.word.scale.y - sy) * w;
+      }
+      p.mesh.scale.set(sx, -sy, 1);
       p.mesh.position.z += lift;
       p.mesh.position.y += Math.sin(t * 1.3 + i * 1.7) * baseSize.y * 0.004; // each bone breathes a little
-      p.mesh.rotation.set(p.start.rot.x * (1 - k) + p.lift * 0.12, p.start.rot.y * (1 - k) + p.spin, p.start.rot.z * (1 - k) - p.lift * 0.08);
+      p.mesh.rotation.set(rx + p.lift * 0.12, ry + p.spin, rz - p.lift * 0.08);
     });
 
     if (isNeon) {
@@ -389,7 +432,8 @@ export function createLogo3D(canvas, opts = {}) {
   frame();
 
   const api = { renderer, scene, camera, root, logo, pieces, setMaterial, assemble, explode, lightUp,
-    get assembled() { return assembleT; },
+    get assembled() { return o.word ? 1 - wordT : assembleT; },
+    get spelled() { return wordT; },
     destroy() { cancelAnimationFrame(raf); renderer.dispose(); } };
   return api;
 }

@@ -76,9 +76,12 @@ h2.display{font-size:clamp(40px,7vw,96px)}
 @media(max-width:999px){.hero .side{display:none}.hero .copy{padding-bottom:72px}.scroll-hint{display:none}}
 
 /* countdown bar */
-.count{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:14px 24px;background:#000;border-top:1px solid var(--line)}
-.count b{font-family:var(--display);font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.count{display:flex;align-items:center;justify-content:center;gap:14px 28px;flex-wrap:wrap;padding:20px 24px;background:#141414;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.count .pixel{font-size:13px;color:var(--ink);letter-spacing:.2em}
+.count b{font-family:var(--display);font-size:30px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
 .count b.num{font-variant-numeric:tabular-nums;color:var(--red)}
+.count .mini{font-size:12px;padding:11px 16px;border-color:var(--ink);background:var(--ink);color:#000}
+.count .mini:hover{background:#fff}
 
 /* ticker */
 .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--ink);color:#000}

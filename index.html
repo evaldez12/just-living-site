@@ -169,7 +169,7 @@
   </div>
 </footer>
 
-<nav class="variants" aria-label="Design version"><span>Version</span><a href="index.html" class="on">A</a><a href="option-c.html">C</a></nav>
+<nav class="variants" aria-label="Design version"><span>Version</span><a href="index.html" class="on">A</a><a href="option-b.html">B</a></nav>
 
 <script type="module">
 import { initStore, renderGrid, bindFilters, tilt, subscribe, supportsWebGL } from './js/store.js';
@@ -181,7 +181,7 @@ if (supportsWebGL()) {
   const hero = createLogo3D(document.getElementById('hero3d'), {
     svg: 'assets/logo/jl-mark.svg', material: 'bone', fit: 0.74, offsetX: 0.22, offsetY: 0.08,
     narrowBelow: 1000, fitMobile: 0.5, offsetXMobile: 0.1, offsetYMobile: 0.2,
-    scrollRotate: 1.4, parallax: 0.6,
+    scrollRotate: 1.4, parallax: 0.6, word: true,
   });
   document.querySelectorAll('.mats button').forEach(b => b.addEventListener('click', () => {
     if (b.dataset.act === 'explode') {
