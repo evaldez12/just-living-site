@@ -1,11 +1,17 @@
 # not part of the website: keep these out of the Cloudflare upload
 .git
+.git/**
+.wrangler
+.wrangler/**
 .gitignore
 .assetsignore
 wrangler.jsonc
-tools/
-worker/
-screenshots/
+tools
+tools/**
+worker
+worker/**
+screenshots
+screenshots/**
 artifact.html
 LAUNCH.md
 CNAME.example
