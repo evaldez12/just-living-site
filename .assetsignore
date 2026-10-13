@@ -1,0 +1,11 @@
+# not part of the website: keep these out of the Cloudflare upload
+.git
+.gitignore
+.assetsignore
+wrangler.jsonc
+tools/
+worker/
+screenshots/
+artifact.html
+LAUNCH.md
+CNAME.example

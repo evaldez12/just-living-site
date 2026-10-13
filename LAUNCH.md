@@ -6,9 +6,16 @@ without accounts (cart stays in the browser, restock alerts are saved locally); 
 the steps that connect it to the real world. Each one is a single value in `js/config.js`
 or `products.json`.
 
-## 1. Host on GitHub Pages (Ed)
-Done on 2026-10-10: repo https://github.com/evaldez12/just-living-site (public, required for
-Pages on a free account), live at https://evaldez12.github.io/just-living-site/.
+## 1. Hosting (Ed) — Cloudflare Workers, deployed from GitHub
+Done on 2026-10-13. The repo https://github.com/evaldez12/just-living-site is connected to a
+Cloudflare Worker named `just-living-site` (Workers & Pages in the Cloudflare dashboard).
+Every push to `main` rebuilds and deploys. Live at:
+https://just-living-site.edwardovaldez0512.workers.dev
+
+`wrangler.jsonc` tells Cloudflare to serve the repo as static files; `.assetsignore` keeps the
+tooling out of the upload. GitHub Pages (https://evaldez12.github.io/just-living-site/) still
+works as a mirror until the domain is connected; turn it off then (repo Settings → Pages).
+Wrangler (Cloudflare's CLI) is installed and logged in on this Mac: `wrangler deployments list --name just-living-site`.
 1. Create a repo (private is fine) and push this `justliving` folder as the root.
    `.nojekyll` is already there so GitHub serves the files as-is.
 2. Repo → Settings → Pages → Source: Deploy from branch → `main` / root. The site is live at
@@ -20,13 +27,11 @@ Pages on a free account), live at https://evaldez12.github.io/just-living-site/.
 justlivingnyc.com is parked, so it has either expired or been dropped. Check it at a
 registrar (Cloudflare Registrar is at-cost, about $10/yr for .com). If it's gone, consider
 `justliving.nyc` or `justlivingnyc.co` as fallbacks and ask the client which they prefer.
-1. Buy the domain. In its DNS add:
-   - `A` records for `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - `CNAME` for `www` → `<user>.github.io`
-2. Rename `CNAME.example` to `CNAME` with the bare domain inside, commit and push.
-3. Repo → Settings → Pages → Custom domain → enter the domain, wait for the check, tick
-   "Enforce HTTPS".
-4. Update `SITE_URL` in `js/config.js` and the og:image URL in `index.html` to the full
+1. Buy the domain through Cloudflare Registrar (Domains → Register) so DNS is already here.
+2. Cloudflare dashboard → Workers & Pages → just-living-site → Settings → Domains & Routes →
+   Add → Custom domain → enter the domain (and again for `www`). Cloudflare creates the DNS
+   records and the certificate itself; nothing to copy.
+3. Update `SITE_URL` in `js/config.js` and the og:image URL in `index.html` to the full
    `https://` address (social previews need absolute URLs).
 
 ## 3. Payments (client's Stripe + Ed's worker)
