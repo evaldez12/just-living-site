@@ -88,7 +88,10 @@ under the hero counts down, then flips to "Live now" with a Shop button.
 - Shipping and returns terms (`info.html`): confirm rates and windows.
 - `CONTACT_EMAIL` in `js/config.js` (set up `hello@` on the new domain, Cloudflare Email
   Routing forwards it for free).
-- Cleaner Crown of Thorns photos: replace `assets/products/crown-tee-front.jpg` and `-back.jpg`.
+- Product photos on the site are the ivory cut-outs in `assets/products/ivory/` (made by `tools/ivory.py`
+  from the originals in `assets/products/`). The Pirate Tee could not be cut out (white tee on white),
+  so it is tinted instead: ask the designer for the artwork on a transparent PNG and re-run the script.
+- Cleaner Crown of Thorns photos: replace `assets/products/crown-tee-front.jpg` and `-back.jpg`, then re-run `docpython tools/ivory.py`.
 
 ## What the client pays for
 | Item | Who | Cost |
