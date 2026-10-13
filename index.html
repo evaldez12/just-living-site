@@ -244,7 +244,7 @@ document.getElementById('alerts-form').addEventListener('submit', async e => {
   const msg = document.getElementById('alerts-msg'), input = document.getElementById('alerts-email');
   try {
     const res = await subscribe(input.value.trim(), { restock_product: 'next-drop' });
-    msg.textContent = res.saved === 'klaviyo' ? "You're on the list." : 'Saved. (Connect Klaviyo in js/config.js to send real texts and emails.)';
+    msg.textContent = res.saved === 'local' ? 'Saved on this device only.' : "You're on the list.";
     input.value = '';
   } catch (err) { msg.textContent = err.message; }
 });

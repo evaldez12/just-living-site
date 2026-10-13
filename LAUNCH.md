@@ -34,44 +34,54 @@ registrar (Cloudflare Registrar is at-cost, about $10/yr for .com). If it's gone
 3. Update `SITE_URL` in `js/config.js` and the og:image URL in `index.html` to the full
    `https://` address (social previews need absolute URLs).
 
-## 3. Payments (client's Stripe + Ed's worker)
-The site is static, so checkout runs through one small Cloudflare Worker that talks to
-Stripe with the client's secret key. Cloudflare Workers are free at this traffic level.
-1. Client creates a Stripe account at stripe.com (needs their LLC details and bank). They
-   add Ed as a team member (Settings → Team) with Developer access, or just share the keys.
+## 3. Payments (client's Stripe)
+Checkout runs through the site's own Cloudflare Worker (`worker/index.js`, route `/api/checkout`).
+1. Client creates a Stripe account at stripe.com (needs their LLC details and bank) and adds Ed
+   as a team member with Developer access, or shares the keys.
 2. In Stripe → Product catalog, create each product with one **Price per size**
-   (e.g. "Crown of Thorns Tee / M", $60). Copy each price ID (`price_...`) into
-   `products.json`:
+   (e.g. "Crown of Thorns Tee / M", $60). Copy each price ID (`price_...`) into `products.json`:
    ```json
    "variants": { "S": "price_1Abc...", "M": "price_1Abd..." }
    ```
    Set `"soldOut": false` on anything in stock. The page then shows the size picker and
-   Add to cart, and the Checkout button creates a Stripe Checkout Session.
-3. Deploy the worker: Cloudflare dashboard → Workers & Pages → Create → paste
-   `worker/checkout.js` → Deploy. Add the variables listed at the top of that file
-   (`STRIPE_SECRET_KEY` as an encrypted secret, `SITE_URL`, `ALLOWED_ORIGINS`).
-4. Copy the worker URL into `js/config.js` → `CHECKOUT_ENDPOINT`.
-5. Test with Stripe's test keys and card `4242 4242 4242 4242` first, then switch the
-   worker's key to the live one.
-6. Stripe emails receipts (Settings → Emails → turn on "Successful payments"). Orders show
-   up in the Stripe dashboard with the shipping address; the client ships from there.
-   Shipping rates live in `worker/checkout.js` (`shipping_options`), tax under Stripe Tax if
-   they want it automated.
-7. Stripe fees: 2.9% + 30¢ per card payment. No monthly fee.
+   Add to cart, and Checkout creates a Stripe Checkout Session.
+3. Add the secret key to the Worker (from the `justliving` folder):
+   ```
+   wrangler secret put STRIPE_SECRET_KEY
+   ```
+   Test with Stripe's test key and card `4242 4242 4242 4242` first, then put in the live key.
+4. Stripe emails receipts (Settings → Emails → "Successful payments"). Orders appear in the
+   Stripe dashboard with the shipping address. Shipping rates are in `worker/index.js`
+   (`shipping_options`); Stripe Tax if they want tax automated. Fees: 2.9% + 30¢ per card payment.
 
-Shortcut if the worker is too much for day one: create a Stripe **Payment Link** per
-product (no code), paste it into `products.json` → `paymentLink`, and the product page
-shows a "Buy now" button that opens it. No cart, but live in 10 minutes.
+Shortcut if Stripe products are too much for day one: create a Stripe **Payment Link** per
+product (no code), paste it into `products.json` → `paymentLink`, and the product page shows a
+"Buy now" button. No cart, but live in 10 minutes.
 
-## 4. Restock and drop alerts (Klaviyo, free up to 250 contacts)
-1. Create the account, make a list called "Drops".
-2. Settings → API keys → copy the **public** key (6 characters) → `KLAVIYO_COMPANY_ID`.
-3. Lists & Segments → Drops → copy the list ID from the URL → `KLAVIYO_LIST_ID`.
-4. Every "Notify me" button now subscribes the contact with `restock_product` and
-   `restock_size` properties, so the client can message just the people waiting for one
-   item. SMS needs the compliance text under the form (Klaviyo provides it).
-5. Signups collected before Klaviyo was connected sit in the browser's local storage
-   (`jl-alerts`) — tiny, but worth exporting from dev tools if there were any.
+## 4. Restock and drop alerts (built in — Cloudflare D1 + the admin page)
+Live since 2026-10-13. Every "Notify me" button and the Restock Alerts form post to
+`/api/subscribe`, which stores the contact, product and size in the D1 database `jl-waitlist`.
+- **Admin page:** `<site>/admin`. Needs the admin key, which is in
+  `~/Documents/just-living-site/ADMIN-KEY.txt` on Ed's Mac (not in the repo). Shows who is
+  waiting per product and size, exports CSV, removes contacts, and sends emails.
+  To rotate the key: `wrangler secret put ADMIN_KEY` with a new value, then update the file.
+- **Email sending (Resend, free to 3,000/month):** create an account at resend.com, add the
+  brand's domain under Domains and put the two DNS records it gives you into Cloudflare DNS
+  (same account, Domains → the domain → DNS). Then:
+  ```
+  wrangler secret put RESEND_API_KEY
+  ```
+  and set `MAIL_FROM` in `wrangler.jsonc` to e.g. `Just Living <drops@justlivingnyc.com>`,
+  redeploy. Until the domain is verified, Resend only delivers to the account owner's own
+  address, which is enough to test with the "Send test" button.
+- Every email carries a one-click unsubscribe link (`/api/unsubscribe`), required by law.
+- **Texts:** phone numbers are collected but not messaged from the admin page. Export the CSV
+  and use Klaviyo, Postscript or Twilio for SMS; US marketing texts need carrier registration
+  (10DLC) first.
+- Klaviyo can still be used alongside: fill `KLAVIYO_*` in `js/config.js` and signups go to
+  both.
+- `SITE_URL` in `wrangler.jsonc` must be the real domain once it exists (it is used in
+  unsubscribe links and Stripe return URLs).
 
 ## 5. Next drop countdown
 Set `NEXT_DROP: '2026-11-14T18:00:00-05:00'` and `NEXT_DROP_NAME: 'Winter 01'`. The bar
@@ -99,7 +109,7 @@ under the hero counts down, then flips to "Live now" with a Shop button.
 | Hosting (GitHub Pages + Cloudflare Worker) | Ed, billed as hosting fee | $0 to Ed |
 | Domain | Ed buys, bills through | ~$10/yr |
 | Stripe | Client | 2.9% + 30¢ per sale |
-| Klaviyo | Client | free to 250 contacts |
+| Waitlist + admin (Cloudflare D1, Resend email) | Ed, billed as hosting fee | $0 |
 
 ## Previewing locally
 From the `just-living-site` folder:

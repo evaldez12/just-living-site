@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Just Living — Admin</title>
+<link rel="icon" href="assets/logo/jl-mark-white.png">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070707;--panel:#101010;--ink:#ece6d8;--dim:#8f8a80;--line:rgba(236,230,216,.14);--red:#c8102e;--ok:#3ddc84}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
+a{color:inherit}
+.wrap{width:min(1100px,100% - 32px);margin:0 auto;padding:28px 0 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:28px}
+header .t{display:flex;align-items:center;gap:12px}
+header img{height:30px}
+header h1{font-family:'Anton',Impact,sans-serif;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+.px{font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+.btn:hover,.btn.solid{background:var(--ink);color:#000}
+.btn.sm{padding:6px 10px;font-size:11px}
+.btn.danger{border-color:var(--red);color:var(--red)}.btn.danger:hover{background:var(--red);color:#fff}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat b{display:block;font-family:'Anton',Impact,sans-serif;font-size:40px;line-height:1}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+.panel h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+.tag{display:inline-block;font-family:'Silkscreen',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--line);border-radius:999px;color:var(--dim)}
+.tag.email{color:var(--ok);border-color:rgba(61,220,132,.4)}
+.tag.phone{color:#f5c542;border-color:rgba(245,197,66,.4)}
+form{display:grid;gap:10px}
+input,select,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#000;color:var(--ink);font:inherit;font-size:15px}
+textarea{min-height:140px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{font-size:13px;color:var(--dim);min-height:1.4em}
+.msg.err{color:#ff6b7a}.msg.ok{color:var(--ok)}
+#login{max-width:460px;margin:12vh auto 0;text-align:center}
+#login p{color:var(--dim);margin:10px 0 20px}
+#app{display:none}
+.hidden{display:none}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.wrap{padding-top:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="t"><img src="assets/logo/jl-mark-white.png" alt=""><h1>Waitlist admin</h1></div>
+    <div class="row"><span class="px" id="who"></span><button class="btn sm hidden" id="logout">Lock</button></div>
+  </header>
+
+  <section id="login">
+    <span class="px">Owner only</span>
+    <h2 style="font-family:'Anton',Impact,sans-serif;font-size:40px;text-transform:uppercase;margin-top:8px">Enter the admin key</h2>
+    <p>The key lives with Ed. It is never shown again after this screen.</p>
+    <form id="login-form"><input id="key" type="password" placeholder="Admin key" autocomplete="current-password" required><button class="btn solid" type="submit">Open</button><div class="msg" id="login-msg"></div></form>
+  </section>
+
+  <main id="app">
+    <div class="grid">
+      <div class="stat"><span class="px">People waiting</span><b id="s-people">–</b></div>
+      <div class="stat"><span class="px">Emails</span><b id="s-emails">–</b></div>
+      <div class="stat"><span class="px">Phone numbers</span><b id="s-phones">–</b></div>
+      <div class="stat"><span class="px">Email sending</span><b id="s-mail" style="font-size:22px;margin-top:8px">–</b></div>
+    </div>
+
+    <div class="panel">
+      <h2>Waiting, by product and size <span class="row"><button class="btn sm" id="refresh">Refresh</button><a class="btn sm" id="export" href="#">Export CSV</a></span></h2>
+      <table><thead><tr><th>Product</th><th>Size</th><th>Type</th><th style="text-align:right">Count</th></tr></thead><tbody id="summary"></tbody></table>
+    </div>
+
+    <div class="panel">
+      <h2>Send a restock or drop email</h2>
+      <form id="send-form">
+        <div class="row">
+          <select id="send-product" style="flex:1;min-width:220px"></select>
+          <input id="send-test" type="email" placeholder="Send a test to this address first (optional)" style="flex:2;min-width:240px">
+        </div>
+        <input id="send-subject" placeholder="Subject, e.g. Crown of Thorns is back. Sizes M–XL." required>
+        <textarea id="send-body" placeholder="Short and direct. The link to the product page, when it goes live, how many. An unsubscribe link is added automatically." required></textarea>
+        <div class="row"><button class="btn" type="button" id="send-test-btn">Send test</button><button class="btn solid" type="submit" id="send-btn">Send to everyone waiting</button><span class="msg" id="send-msg"></span></div>
+      </form>
+      <p class="px" style="margin-top:12px">Phone numbers are not messaged from here. Export the CSV and use a texting service for those.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Recent sends</h2>
+      <table><thead><tr><th>When</th><th>Product</th><th>Subject</th><th style="text-align:right">Recipients</th></tr></thead><tbody id="sends"></tbody></table>
+    </div>
+
+    <div class="panel">
+      <h2>Everyone <span class="row"><select id="filter" style="width:auto;padding:6px 10px;font-size:13px"><option value="">All products</option></select></span></h2>
+      <table><thead><tr><th>Contact</th><th>Product</th><th>Size</th><th>Added</th><th>Status</th><th></th></tr></thead><tbody id="list"></tbody></table>
+    </div>
+  </main>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const API = '/api/admin';
+let KEY = sessionStorage.getItem('jl-admin-key') || '';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nice = p => ({ 'next-drop': 'Next drop (general)', all: 'Everyone' }[p] || p.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
+
+async function api(path, opts = {}) {
+  const r = await fetch(API + path, { ...opts, headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', ...(opts.headers || {}) } });
+  if (r.status === 401) { lock(); throw new Error('Wrong key'); }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+  return data;
+}
+function lock() { KEY = ''; sessionStorage.removeItem('jl-admin-key'); $('#app').style.display = 'none'; $('#login').style.display = ''; $('#logout').classList.add('hidden'); $('#who').textContent = ''; }
+async function unlock() {
+  const s = await api('/summary');
+  $('#login').style.display = 'none'; $('#app').style.display = 'block'; $('#logout').classList.remove('hidden'); $('#who').textContent = 'Unlocked';
+  render(s); await loadList();
+}
+function render(s) {
+  $('#s-people').textContent = s.totals.people || 0; $('#s-emails').textContent = s.totals.emails || 0; $('#s-phones').textContent = s.totals.phones || 0;
+  $('#s-mail').textContent = s.mail ? 'Connected' : 'Not connected'; $('#s-mail').style.color = s.mail ? 'var(--ok)' : 'var(--dim)';
+  $('#summary').innerHTML = s.rows.length ? s.rows.map(r => `<tr><td>${esc(nice(r.product))}</td><td>${esc(r.size)}</td><td><span class="tag ${r.kind}">${r.kind}</span></td><td class="n">${r.n}</td></tr>`).join('') : '<tr><td colspan="4" style="color:var(--dim)">Nobody yet. Signups from the site appear here.</td></tr>';
+  const products = [...new Set(s.rows.map(r => r.product))];
+  $('#send-product').innerHTML = `<option value="all">Everyone on the list</option>` + products.map(p => `<option value="${esc(p)}">${esc(nice(p))}</option>`).join('');
+  $('#filter').innerHTML = `<option value="">All products</option>` + products.map(p => `<option value="${esc(p)}">${esc(nice(p))}</option>`).join('');
+  $('#sends').innerHTML = s.sends.length ? s.sends.map(r => `<tr><td>${esc(r.created_at)}</td><td>${esc(nice(r.product))}</td><td>${esc(r.subject)}</td><td class="n">${r.recipients}</td></tr>`).join('') : '<tr><td colspan="4" style="color:var(--dim)">No emails sent yet.</td></tr>';
+  $('#send-btn').disabled = !s.mail; $('#send-test-btn').disabled = !s.mail;
+}
+async function loadList() {
+  const p = $('#filter').value; const { rows } = await api('/subscribers' + (p ? '?product=' + encodeURIComponent(p) : ''));
+  $('#list').innerHTML = rows.length ? rows.map(r => `<tr><td>${esc(r.contact)} <span class="tag ${r.kind}">${r.kind}</span></td><td>${esc(nice(r.product))}</td><td>${esc(r.size)}</td><td>${esc(r.created_at.slice(0, 16))}</td><td>${r.unsubscribed_at ? '<span class="tag">unsubscribed</span>' : '<span class="tag email">active</span>'}</td><td style="text-align:right"><button class="btn sm danger" data-del="${r.id}">Remove</button></td></tr>`).join('') : '<tr><td colspan="6" style="color:var(--dim)">Empty.</td></tr>';
+}
+$('#login-form').addEventListener('submit', async e => { e.preventDefault(); KEY = $('#key').value.trim(); try { await unlock(); sessionStorage.setItem('jl-admin-key', KEY); $('#key').value = ''; } catch (err) { $('#login-msg').textContent = err.message; $('#login-msg').className = 'msg err'; } });
+$('#logout').addEventListener('click', lock);
+$('#refresh').addEventListener('click', async () => { render(await api('/summary')); await loadList(); });
+$('#filter').addEventListener('change', loadList);
+$('#export').addEventListener('click', async e => { e.preventDefault(); const r = await fetch(API + '/export.csv', { headers: { Authorization: 'Bearer ' + KEY } }); const blob = await r.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'just-living-waitlist.csv'; a.click(); });
+$('#list').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b) return; if (!confirm('Remove this contact?')) return; await api('/subscribers/' + b.dataset.del, { method: 'DELETE' }); render(await api('/summary')); await loadList(); });
+async function send(test) {
+  const msg = $('#send-msg'); msg.className = 'msg'; msg.textContent = 'Sending…';
+  try {
+    const body = { product: $('#send-product').value, subject: $('#send-subject').value, message: $('#send-body').value };
+    if (test) { body.test = $('#send-test').value.trim(); if (!body.test) throw new Error('Enter a test address first.'); }
+    const r = await api('/send', { method: 'POST', body: JSON.stringify(body) });
+    msg.className = 'msg ok'; msg.textContent = test ? 'Test sent.' : `Sent to ${r.sent} people.`;
+    if (!test) render(await api('/summary'));
+  } catch (err) { msg.className = 'msg err'; msg.textContent = err.message; }
+}
+$('#send-test-btn').addEventListener('click', () => send(true));
+$('#send-form').addEventListener('submit', e => { e.preventDefault(); if (confirm('Send this to everyone waiting? This cannot be undone.')) send(false); });
+if (KEY) unlock().catch(lock);
+</script>
+</body>
+</html>

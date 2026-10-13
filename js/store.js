@@ -126,12 +126,12 @@ function renderCart() {
     $$('[data-remove]', box).forEach(b => b.addEventListener('click', () => removeLine(+b.dataset.remove)));
   }
   const note = $('#cart-note');
-  note.textContent = CONFIG.CHECKOUT_ENDPOINT ? 'Secure checkout by Stripe. Shipping and tax calculated at checkout.' : 'Checkout opens once Stripe is connected (see LAUNCH.md).';
+  note.textContent = 'Secure checkout by Stripe. Shipping and tax calculated at checkout.';
 }
 async function checkout() {
   const cart = readCart(); if (!cart.length) return;
   const note = $('#cart-note'), btn = $('#cart-checkout');
-  if (!CONFIG.CHECKOUT_ENDPOINT) { note.textContent = 'Not connected yet: deploy worker/checkout.js and set CHECKOUT_ENDPOINT in js/config.js.'; return; }
+  if (!CONFIG.CHECKOUT_ENDPOINT) { note.textContent = 'Checkout is not connected yet.'; return; }
   const items = cart.map(l => ({ price: productById(l.id)?.variants?.[l.size], quantity: l.qty })).filter(i => i.price);
   if (items.length !== cart.length) { note.textContent = 'An item in the cart has no Stripe price ID yet (products.json → variants).'; return; }
   btn.disabled = true; note.textContent = 'Opening secure checkout…';
@@ -167,6 +167,16 @@ export async function subscribe(contact, props = {}) {
     list.push({ contact, ...props, at: new Date().toISOString() });
     localStorage.setItem('jl-alerts', JSON.stringify(list));
   } catch {}
+  // built-in waitlist (Cloudflare Worker + D1) first
+  if (CONFIG.WAITLIST_API) {
+    try {
+      const r = await fetch(CONFIG.WAITLIST_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contact, product: props.restock_product || 'next-drop', size: props.restock_size || 'any', source: location.pathname }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok) return { saved: 'waitlist' };
+      if (r.status === 400 && d.error) throw new Error(d.error);
+    } catch (e) { if (e.message && !/fetch|network|JSON/i.test(e.message)) throw e; }
+  }
   if (!CONFIG.KLAVIYO_COMPANY_ID || !CONFIG.KLAVIYO_LIST_ID) return { saved: 'local' };
   const attrs = isEmail ? { email: contact } : { phone_number: phone.startsWith('+') ? phone : '+1' + phone.replace(/\D/g, '') };
   const body = { data: { type: 'subscription', attributes: {
@@ -186,7 +196,7 @@ function bindNotifyForm() {
     const product = e.target.dataset.product, size = $('#notify-size').value;
     try {
       const res = await subscribe(contact, { restock_product: product || 'next-drop', restock_size: size || 'any' });
-      msg.textContent = res.saved === 'klaviyo' ? "You're on the list." : "Saved. (Connect Klaviyo in js/config.js to send real texts and emails.)";
+      msg.textContent = res.saved === 'local' ? "Saved on this device only (waitlist backend not reachable here)." : "You're on the list.";
       $('#notify-contact').value = '';
     } catch (err) { msg.textContent = err.message; }
   });

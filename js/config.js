@@ -1,16 +1,16 @@
 // Just Living — site configuration. Fill these in when the accounts exist.
 // Everything works without them (cart stays local, alerts are saved in the browser).
 export const CONFIG = {
-  // Stripe checkout. The site is static (GitHub Pages), so the cart posts to a tiny
-  // Cloudflare Worker (worker/checkout.js) that creates a Stripe Checkout Session with the
-  // client's secret key and sends the buyer to Stripe. Example:
-  // 'https://jl-checkout.<account>.workers.dev'
-  CHECKOUT_ENDPOINT: '',
+  // Backend: the Cloudflare Worker in worker/index.js, served from the same origin as the site.
+  // Waitlist signups go to /api/subscribe (stored in D1, managed at /admin); checkout goes to
+  // /api/checkout (Stripe, once STRIPE_SECRET_KEY is set). On hosts without the Worker (GitHub
+  // Pages mirror, previews) these calls fail quietly and the fallbacks below apply.
+  WAITLIST_API: '/api/subscribe',
+  CHECKOUT_ENDPOINT: '/api/checkout',
   // Where Stripe sends people after paying / cancelling (the live site URL).
   SITE_URL: 'https://justlivingnyc.com',
 
-  // Klaviyo: public API key ("company id", 6 characters) and the list to subscribe to.
-  // Found under Settings > API keys and Lists & Segments in Klaviyo.
+  // Optional: Klaviyo as a fallback/alternative to the built-in waitlist (leave empty to skip).
   KLAVIYO_COMPANY_ID: '',
   KLAVIYO_LIST_ID: '',
 

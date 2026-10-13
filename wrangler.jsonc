@@ -1,11 +1,23 @@
 {
-  // Cloudflare Worker that serves the static site. Deployed automatically from GitHub (main).
+  // Cloudflare Worker: serves the static site and the /api routes (waitlist, admin, Stripe checkout).
+  // Deployed automatically from GitHub (main) or with `wrangler deploy`.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "just-living-site",
+  "main": "worker/index.js",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "jl-waitlist", "database_id": "8a1932c9-28c8-4037-ada4-538e0aef7895" }
+  ],
+  "vars": {
+    "SITE_URL": "https://just-living-site.edwardovaldez0512.workers.dev",
+    "MAIL_FROM": "Just Living <onboarding@resend.dev>"
   }
+  // secrets (wrangler secret put): ADMIN_KEY, RESEND_API_KEY, STRIPE_SECRET_KEY
 }

@@ -382,7 +382,7 @@ new IntersectionObserver(async (es, ob) => {
 document.getElementById('alerts-form').addEventListener('submit', async e => {
   e.preventDefault();
   const msg = document.getElementById('alerts-msg'), input = document.getElementById('alerts-email');
-  try { const r = await subscribe(input.value.trim(), { restock_product: 'next-drop' }); msg.textContent = r.saved === 'klaviyo' ? '> OK. YOU ARE ON THE LIST.' : '> SAVED LOCALLY. CONNECT KLAVIYO IN JS/CONFIG.JS TO SEND.'; input.value = ''; }
+  try { const r = await subscribe(input.value.trim(), { restock_product: 'next-drop' }); msg.textContent = r.saved === 'local' ? '> SAVED ON THIS DEVICE ONLY.' : '> OK. YOU ARE ON THE LIST.'; input.value = ''; }
   catch (err) { msg.textContent = '> ERROR: ' + err.message.toUpperCase(); }
 });
 </script>
